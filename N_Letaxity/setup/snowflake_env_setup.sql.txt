@@ -1,0 +1,150 @@
+-- ====================================================================================================================
+-- Snowflake Environment Setup for Zen_Clarity Monorepo - N_LeTaxity Project
+-- This script sets up Databases, Schemas, Roles, and Users for Development, QA, and Production environments.
+--
+-- IMPORTANT: Replace placeholders like '<YOUR_PUBLIC_KEY_STRING>', '<YOUR_SNOWFLAKE_QA_WAREHOUSE>',
+--            '<YOUR_SNOWFLAKE_DEV_WAREHOUSE>', '<YOUR_SNOWFLAKE_PROD_WAREHOUSE>', etc. with your actual values.
+--            For DEV_VIPER_SCHEMA, replace 'VIPER' with your actual username/initials.
+-- ====================================================================================================================
+
+-- --- Context Setting ---
+USE ROLE ACCOUNTADMIN;
+
+-- ====================================================================================================================
+-- 1. Database and Schemas Setup
+-- ====================================================================================================================
+
+CREATE DATABASE IF NOT EXISTS nyc_taxi_db;
+USE DATABASE nyc_taxi_db;
+
+CREATE SCHEMA IF NOT EXISTS batch_data;
+
+CREATE SCHEMA IF NOT EXISTS dev_viper;
+
+-- ADDITION: Create the QA/Staging schema
+CREATE SCHEMA IF NOT EXISTS staging_data;
+
+CREATE SCHEMA IF NOT EXISTS production_data;
+
+-- ====================================================================================================================
+-- 2. Roles Setup
+-- ====================================================================================================================
+
+CREATE ROLE IF NOT EXISTS DBT_DEV_ROLE;
+
+-- ADDITION: Create the QA Role
+CREATE ROLE IF NOT EXISTS DBT_QA_ROLE;
+
+CREATE ROLE IF NOT EXISTS DBT_PROD_ROLE;
+
+GRANT USAGE ON DATABASE nyc_taxi_db TO ROLE DBT_DEV_ROLE;
+GRANT USAGE ON DATABASE nyc_taxi_db TO ROLE DBT_QA_ROLE; -- ADDITION: Grant DB usage to QA Role
+GRANT USAGE ON DATABASE nyc_taxi_db TO ROLE DBT_PROD_ROLE;
+
+GRANT USAGE ON SCHEMA nyc_taxi_db.batch_data TO ROLE DBT_DEV_ROLE;
+GRANT USAGE ON SCHEMA nyc_taxi_db.batch_data TO ROLE DBT_QA_ROLE; -- ADDITION: Grant schema usage to QA Role
+GRANT USAGE ON SCHEMA nyc_taxi_db.batch_data TO ROLE DBT_PROD_ROLE;
+
+GRANT USAGE ON SCHEMA nyc_taxi_db.dev_viper TO ROLE DBT_DEV_ROLE;
+GRANT CREATE TABLE ON SCHEMA nyc_taxi_db.dev_viper TO ROLE DBT_DEV_ROLE;
+GRANT CREATE VIEW ON SCHEMA nyc_taxi_db.dev_viper TO ROLE DBT_DEV_ROLE;
+GRANT SELECT ON ALL TABLES IN SCHEMA nyc_taxi_db.dev_viper TO ROLE DBT_DEV_ROLE;
+GRANT SELECT ON ALL VIEWS IN SCHEMA nyc_taxi_db.dev_viper TO ROLE DBT_DEV_ROLE;
+
+-- ADDITION: Grant specific privileges on the QA schema to the QA role
+GRANT USAGE ON SCHEMA nyc_taxi_db.staging_data TO ROLE DBT_QA_ROLE;
+GRANT CREATE TABLE ON SCHEMA nyc_taxi_db.staging_data TO ROLE DBT_QA_ROLE;
+GRANT CREATE VIEW ON SCHEMA nyc_taxi_db.staging_data TO ROLE DBT_QA_ROLE;
+GRANT SELECT ON ALL TABLES IN SCHEMA nyc_taxi_db.staging_data TO ROLE DBT_QA_ROLE;
+GRANT SELECT ON ALL VIEWS IN SCHEMA nyc_taxi_db.staging_data TO ROLE DBT_QA_ROLE;
+
+GRANT USAGE ON SCHEMA nyc_taxi_db.production_data TO ROLE DBT_PROD_ROLE;
+GRANT CREATE TABLE ON SCHEMA nyc_taxi_db.production_data TO ROLE DBT_PROD_ROLE;
+GRANT CREATE VIEW ON SCHEMA nyc_taxi_db.production_data TO ROLE DBT_PROD_ROLE;
+GRANT SELECT ON ALL TABLES IN SCHEMA nyc_taxi_db.production_data TO ROLE DBT_PROD_ROLE;
+GRANT SELECT ON ALL VIEWS IN SCHEMA nyc_taxi_db.production_data TO ROLE DBT_PROD_ROLE;
+
+-- Grant future privileges (important for newly created objects by dbt)
+GRANT SELECT ON FUTURE TABLES IN SCHEMA nyc_taxi_db.dev_viper TO ROLE DBT_DEV_ROLE;
+GRANT SELECT ON FUTURE VIEWS IN SCHEMA nyc_taxi_db.dev_viper TO ROLE DBT_DEV_ROLE;
+
+-- ADDITION: Grant future privileges on the QA schema
+GRANT SELECT ON FUTURE TABLES IN SCHEMA nyc_taxi_db.staging_data TO ROLE DBT_QA_ROLE;
+GRANT SELECT ON FUTURE VIEWS IN SCHEMA nyc_taxi_db.staging_data TO ROLE DBT_QA_ROLE;
+
+GRANT SELECT ON FUTURE TABLES IN SCHEMA nyc_taxi_db.production_data TO ROLE DBT_PROD_ROLE;
+GRANT SELECT ON FUTURE VIEWS IN SCHEMA nyc_taxi_db.production_data TO ROLE DBT_PROD_ROLE;
+
+GRANT ROLE DBT_DEV_ROLE TO ROLE SYSADMIN;
+GRANT ROLE DBT_QA_ROLE TO ROLE SYSADMIN; -- ADDITION: Grant QA Role to SYSADMIN
+GRANT ROLE DBT_PROD_ROLE TO ROLE SYSADMIN;
+
+-- ====================================================================================================================
+-- 3. Users Setup (Updated for Key-Pair Authentication)
+-- ====================================================================================================================
+
+-- Create Development User
+CREATE USER IF NOT EXISTS DBT_DEV_USER_VIPER
+RSA_PUBLIC_KEY = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsAHhvCz6IlzSOtnH43Do
+voaEF55E6wyE1gDcOV0k+9hPsslCe4MjS1OS8q2PQiqSJsLXcUBYoIYBLMojphqw
+0OHkP19MlyktFd9lFclTyva0xupB57bycJAtwJD1a4FTJx1tpZMOoUrOqcUGL2iI
+F2b3gQEcFTHimtr4YjK3cC6SqvlO1S+qvl4FCDHa/V0y1JeHZ6P+T5aYBnLoPWnZ
+EMfiTqaKdHFqX1lexYj4ikobrxdTjL8G/F9auG4fgkM7EpjJBvR+u0XVrzHK4GWZ
+WAOskwiEgj9lARwlNv5pPdnihR/yQ2tXdy9DE9v9LNWoh9l5FPokHiIBCa0ZCfsZ
+hQIDAQAB'
+DEFAULT_ROLE = DBT_DEV_ROLE
+DEFAULT_WAREHOUSE = COMPUTE_WH;
+
+CREATE USER IF NOT EXISTS DBT_QA_USER
+RSA_PUBLIC_KEY = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxl8vh4EasDs5B7EFYzkV
+ywv342c7Hn5Cvf3LMB1CK779RIAS+nOFltJf7cQpm4P2gTQDvgD8u9d7OWidNrOe
+Q7sfLWmihHxiTfHeWt5YZXYVpv980H9zrYSgL+Qow2TPLRrRwNGUqCRXTNANNUb3
+bdOEkMTZLZ1DmLorn3Px8VLD8w8cus/bVjPosUN4X8OahTk+h/GrbFZhF0e8y76B
+n/CXIivy8zmN9qrF1iq3PgCeRmbCXX9SDe1a43K9kDPhE4GmClnipPe37kFIsrdM
+KqJH+Hr1S1FRlVwrIwjhOoG02LMS7cmme9UXvPqUlHKkGC2rxxQHqyadjid43ut5
+/wIDAQAB'
+DEFAULT_ROLE = DBT_QA_ROLE
+DEFAULT_WAREHOUSE = COMPUTE_WH;
+
+
+
+-- Create Production User
+CREATE USER IF NOT EXISTS DBT_PROD_USER
+RSA_PUBLIC_KEY = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwd50VYLF4zkIja+9kyun
+FABU1bBjCTR9jmrr1kEDeAzz6sD9nWSvn4xIK23knax/mVi4b7LrO+BljW9GdgHY
+cJ5bewo92Fyy0uTrngcYa8HAHO1bLCDSK8AfwXlb0P73Kvgb4h4jyK3oHIrJdQ5n
+x5GelIDDUnrOTNxCzih19sa+SABthwe/gnoHr4ExSjG6/zQGhafyhYfr6owDFHGn
+gdEznitVH7L66n3quRshKQrqsQv7mLYiSw6eN6nqeReOlydIkZmka2MXXTUapXHB
+Koy31axqQFwN0tl/MoNOkW2nn20WqmPwo0bPPP9+1PpcdkQrbX+rajjGIyCxHMd9
+OwIDAQAB'
+DEFAULT_ROLE = DBT_PROD_ROLE
+DEFAULT_WAREHOUSE = COMPUTE_WH;
+
+
+-- Grant roles to the respective users
+GRANT ROLE DBT_DEV_ROLE TO USER DBT_DEV_USER_VIPER;
+GRANT ROLE DBT_QA_ROLE TO USER DBT_QA_USER; -- ADDITION: Grant QA Role to QA User
+GRANT ROLE DBT_PROD_ROLE TO USER DBT_PROD_USER;
+
+-- ====================================================================================================================
+-- 4. Warehouse Usage Grants (if not already handled by default role)
+-- ====================================================================================================================
+
+-- Grant usage on your development warehouse to the dev role
+GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE DBT_DEV_ROLE;
+
+-- ADDITION: Grant usage on your QA warehouse to the QA role
+GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE DBT_QA_ROLE;
+
+-- Grant usage on your production warehouse to the prod role
+GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE DBT_PROD_ROLE;
+
+-- ====================================================================================================================
+-- 5. Verification (Optional - run these after executing the script)
+-- ====================================================================================================================
+-- SHOW SCHEMAS IN DATABASE nyc_taxi_db;
+-- SHOW ROLES;
+-- SHOW GRANTS TO ROLE DBT_DEV_ROLE;
+-- SHOW GRANTS TO ROLE DBT_QA_ROLE;
+-- SHOW GRANTS TO ROLE DBT_PROD_ROLE;
+
