@@ -1,0 +1,63 @@
+-- 1. Count by cab_type, year, month
+SELECT cab_type,
+       EXTRACT(YEAR FROM pickup_datetime) AS year,
+       EXTRACT(MONTH FROM pickup_datetime) AS month,
+       COUNT(*) AS trip_count
+FROM taxi_trip_data_vw
+GROUP BY 1, 2, 3
+ORDER BY 2, 3, 1;
+--Query ID 7924246 Elapsed time: 18 ms Total rows: 24
+
+-- 2. Average Fare by pickup_zone
+SELECT pickup_zone,
+       ROUND(AVG(fare_amount), 2) AS avg_fare
+FROM taxi_trip_data_vw
+GROUP BY 1
+ORDER BY avg_fare DESC
+LIMIT 10;
+
+--Query ID 7924272  Elapsed time: 3594 ms Total rows: 10
+
+-- 3. Average Passenger Count by cab_type
+SELECT cab_type,
+       ROUND(AVG(passenger_count), 2) AS avg_passengers
+FROM taxi_trip_data_vw
+GROUP BY 1;
+--Query ID 7924299 Elapsed time: 3573 ms Total rows: 2
+
+
+-- 4. Busiest Pickup Zone in June 2024
+SELECT pickup_zone,
+       COUNT(*) AS trip_count
+FROM taxi_trip_data_vw
+WHERE pickup_datetime BETWEEN '2024-06-01' AND '2024-06-30'
+GROUP BY 1
+ORDER BY trip_count DESC
+LIMIT 10; 
+-- Query ID 7924324 Elapsed time: 8 ms Total rows: 10
+
+-- 5. Average Trip Duration by cab_type and Month
+SELECT 
+  cab_type,
+  EXTRACT(YEAR FROM pickup_datetime) AS year,
+  EXTRACT(MONTH FROM pickup_datetime) AS month,
+  ROUND(AVG(EXTRACT(EPOCH FROM dropoff_datetime - pickup_datetime) / 60), 2) AS avg_duration_min
+FROM taxi_trip_data_vw
+GROUP BY 1, 2, 3
+ORDER BY 2, 3, 1;
+--Query ID 7924412 Elapsed time: 4543 ms Total rows: 24
+
+
+SELECT 
+  query_id,
+  query_text,
+  database_name,
+  start_time,
+  end_time,
+  elapsed_time,
+  elapsed_time / 1000 AS elapsed_time_in_ms,
+  elapsed_time / 1000000 AS elapsed_time_in_second
+FROM SYS_QUERY_HISTORY
+WHERE
+query_ID in(   7924246, 7924272, 7924272, 7924299, 7924324, 7924412 )
+ORDER BY start_time DESC

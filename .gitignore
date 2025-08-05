@@ -1,0 +1,16 @@
+# Python virtual environments
+*/dbt_venv/
+venv/ # Generic entry for virtual environments if named simply 'venv'
+
+# dbt artifacts and generated files
+*/target/
+*/logs/
+*/dbt_packages/
+
+# Security related files (important to ignore)
+profiles.yml # This file is usually in ~/.dbt/, but include as a safeguard
+
+# Operating System specific generated files (Windows/macOS)
+.DS_Store
+Thumbs.db
+*.sqlite # If you use SQLite for local development databases

@@ -1,0 +1,284 @@
+
+--**Redshift Key Tables and Views
+
+   --public.taxi_trip_data: batch cleaned historical data.
+
+   --public.taxi_streaming_trips: streaming incoming trip data.
+
+   --public.taxi_zone_lookup: taxi zones lookup.
+
+   --public.taxi_trip_data_vw: summarized batch trips.
+
+   --public.taxi_streaming_trips_vw: summarized streaming trips.
+
+   --public.taxi_trip_simulated_today_vw: simulated today trips for live comparison.
+
+   --public.taxi_trip_top_traffic_vw: baseline busiest day for benchmarking.
+
+
+CREATE TABLE public.taxi_trip_data (
+    vendorid integer ENCODE az64,
+    pickup_datetime timestamp without time zone ENCODE az64,
+    dropoff_datetime timestamp without time zone ENCODE az64,
+    store_and_fwd_flag character varying(10) ENCODE zstd,
+    ratecodeid bigint ENCODE az64,
+    pulocationid integer ENCODE az64,
+    dolocationid integer ENCODE az64,
+    passenger_count bigint ENCODE az64,
+    trip_distance double precision ENCODE zstd,
+    fare_amount double precision ENCODE zstd,
+    extra double precision ENCODE zstd,
+    mta_tax double precision ENCODE zstd,
+    tip_amount double precision ENCODE zstd,
+    tolls_amount double precision ENCODE zstd,
+    ehail_fee double precision ENCODE zstd,
+    improvement_surcharge double precision ENCODE zstd,
+    total_amount double precision ENCODE zstd,
+    payment_type bigint ENCODE az64,
+    trip_type bigint ENCODE az64,
+    congestion_surcharge double precision ENCODE zstd,
+    airport_fee double precision ENCODE zstd,
+    cab_type character varying(10) ENCODE zstd
+) DISTSTYLE AUTO
+SORTKEY
+    (pickup_datetime);
+
+CREATE TABLE public.taxi_streaming_trips (
+    trip_id character varying(50) ENCODE lzo,
+    pickup_datetime timestamp without time zone ENCODE raw,
+    dropoff_datetime timestamp without time zone ENCODE az64,
+    pulocationid integer ENCODE az64,
+    dolocationid integer ENCODE az64,
+    passenger_count integer ENCODE az64,
+    fare_amount double precision ENCODE raw,
+    payment_type integer ENCODE az64,
+    event_time timestamp without time zone ENCODE az64,
+    lambda_received_time timestamp without time zone ENCODE az64,
+    year integer ENCODE az64,
+    month integer ENCODE az64,
+    day integer ENCODE az64,
+    hour integer ENCODE az64,
+    inserted_at timestamp without time zone DEFAULT ('now':: character varying):: timestamp with time zone ENCODE az64
+) DISTSTYLE AUTO
+SORTKEY
+    (pickup_datetime);
+
+CREATE TABLE public.taxi_zone_lookup (
+    location_id integer ENCODE az64,
+    borough character varying(50) ENCODE zstd,
+    zone character varying(100) ENCODE zstd,
+    service_zone character varying(50) ENCODE zstd
+) DISTSTYLE AUTO
+SORTKEY
+    (location_id);
+
+CREATE TABLE public.green_trip_data_staging (
+    vendorid integer ENCODE az64,
+    pickup_datetime timestamp without time zone ENCODE az64,
+    dropoff_datetime timestamp without time zone ENCODE az64,
+    store_and_fwd_flag character varying(10) ENCODE zstd,
+    ratecodeid bigint ENCODE az64,
+    pulocationid integer ENCODE az64,
+    dolocationid integer ENCODE az64,
+    passenger_count bigint ENCODE az64,
+    trip_distance double precision ENCODE zstd,
+    fare_amount double precision ENCODE zstd,
+    extra double precision ENCODE zstd,
+    mta_tax double precision ENCODE zstd,
+    tip_amount double precision ENCODE zstd,
+    tolls_amount double precision ENCODE zstd,
+    ehail_fee double precision ENCODE zstd,
+    improvement_surcharge double precision ENCODE zstd,
+    total_amount double precision ENCODE zstd,
+    payment_type bigint ENCODE az64,
+    trip_type bigint ENCODE az64,
+    congestion_surcharge double precision ENCODE zstd
+) DISTSTYLE AUTO
+SORTKEY
+    (pickup_datetime);
+
+CREATE TABLE public.yellow_trip_data_staging (
+    vendorid integer ENCODE az64,
+    pickup_datetime timestamp without time zone ENCODE az64,
+    dropoff_datetime timestamp without time zone ENCODE az64,
+    passenger_count bigint ENCODE az64,
+    trip_distance double precision ENCODE zstd,
+    ratecodeid bigint ENCODE az64,
+    store_and_fwd_flag character varying(10) ENCODE zstd,
+    pulocationid integer ENCODE az64,
+    dolocationid integer ENCODE az64,
+    payment_type bigint ENCODE az64,
+    fare_amount double precision ENCODE zstd,
+    extra double precision ENCODE zstd,
+    mta_tax double precision ENCODE zstd,
+    tip_amount double precision ENCODE zstd,
+    tolls_amount double precision ENCODE zstd,
+    improvement_surcharge double precision ENCODE zstd,
+    total_amount double precision ENCODE zstd,
+    congestion_surcharge double precision ENCODE zstd,
+    airport_fee double precision ENCODE zstd
+) DISTSTYLE AUTO
+SORTKEY
+    (pickup_datetime);
+    
+CREATE
+OR REPLACE VIEW "public"."taxi_streaming_trips_vw" AS
+SELECT
+   t.trip_id,
+   t.pickup_datetime,
+   t.dropoff_datetime,
+   t.pulocationid,
+   t.dolocationid,
+   z1."zone" AS pickup_zone,
+   z2."zone" AS dropoff_zone,
+   t.passenger_count,
+   t.fare_amount,
+   t.payment_type,
+   t.event_time,
+   t.lambda_received_time,
+   t."year",
+   t."month",
+   t."day",
+   t."hour",
+   t.inserted_at,
+   date_diff(
+      'second':: text,
+      t.lambda_received_time,
+      t.inserted_at
+   ) AS delay_time_seconds,
+   round(
+      date_diff(
+         'second':: text,
+         t.lambda_received_time,
+         t.inserted_at
+      ):: numeric / 60.0,
+      2
+   ) AS delay_time_minutes
+FROM
+   taxi_streaming_trips t
+   LEFT JOIN taxi_zone_lookup z1 ON t.pulocationid = z1.location_id
+   LEFT JOIN taxi_zone_lookup z2 ON t.dolocationid = z2.location_id
+WHERE
+   t.pickup_datetime:: date = 'now':: text:: date;
+   
+CREATE
+OR REPLACE VIEW "public"."taxi_trip_data_vw" AS
+SELECT
+   t.vendorid,
+   t.pickup_datetime,
+   t.dropoff_datetime,
+   t.store_and_fwd_flag,
+   t.ratecodeid,
+   t.pulocationid,
+   t.dolocationid,
+   t.passenger_count,
+   t.trip_distance,
+   t.fare_amount,
+   t.extra,
+   t.mta_tax,
+   t.tip_amount,
+   t.tolls_amount,
+   t.ehail_fee,
+   t.improvement_surcharge,
+   t.total_amount,
+   t.payment_type,
+   t.trip_type,
+   t.congestion_surcharge,
+   t.airport_fee,
+   t.cab_type,
+   z1."zone" AS pickup_zone,
+   z2."zone" AS dropoff_zone
+FROM
+   taxi_trip_data t
+   LEFT JOIN taxi_zone_lookup z1 ON t.pulocationid = z1.location_id
+   LEFT JOIN taxi_zone_lookup z2 ON t.dolocationid = z2.location_id;           
+    
+   
+    
+CREATE
+OR REPLACE VIEW "public"."taxi_trip_top_traffic_vw" AS
+SELECT
+   taxi_trip_data_vw.vendorid,
+   taxi_trip_data_vw.pickup_datetime,
+   taxi_trip_data_vw.dropoff_datetime,
+   taxi_trip_data_vw.store_and_fwd_flag,
+   taxi_trip_data_vw.ratecodeid,
+   taxi_trip_data_vw.pulocationid,
+   taxi_trip_data_vw.dolocationid,
+   taxi_trip_data_vw.passenger_count,
+   taxi_trip_data_vw.trip_distance,
+   taxi_trip_data_vw.fare_amount,
+   taxi_trip_data_vw.extra,
+   taxi_trip_data_vw.mta_tax,
+   taxi_trip_data_vw.tip_amount,
+   taxi_trip_data_vw.tolls_amount,
+   taxi_trip_data_vw.ehail_fee,
+   taxi_trip_data_vw.improvement_surcharge,
+   taxi_trip_data_vw.total_amount,
+   taxi_trip_data_vw.payment_type,
+   taxi_trip_data_vw.trip_type,
+   taxi_trip_data_vw.congestion_surcharge,
+   taxi_trip_data_vw.airport_fee,
+   taxi_trip_data_vw.cab_type,
+   taxi_trip_data_vw.pickup_zone,
+   taxi_trip_data_vw.dropoff_zone
+FROM
+   taxi_trip_data_vw
+WHERE
+   taxi_trip_data_vw.pickup_datetime:: date = '2024-12-13':: date;
+
+CREATE
+OR REPLACE VIEW "public"."taxi_trip_simulated_today_vw" AS
+SELECT
+   'cab_':: text || to_char(t.pickup_datetime, 'HH24MISS':: text) AS trip_id,
+   date_trunc(
+      'day':: text,
+      'now':: text:: date:: timestamp without time zone
+   ) + (
+      t.pickup_datetime - date_trunc('day':: text, t.pickup_datetime)
+   ) AS pickup_datetime,
+   date_trunc(
+      'day':: text,
+      'now':: text:: date:: timestamp without time zone
+   ) + (
+      t.dropoff_datetime - date_trunc('day':: text, t.dropoff_datetime)
+   ) AS dropoff_datetime,
+   t.pulocationid,
+   t.dolocationid,
+   z1."zone" AS pickup_zone,
+   t.passenger_count,
+   t.fare_amount,
+   t.payment_type
+FROM
+   taxi_trip_data t
+   LEFT JOIN taxi_zone_lookup z1 ON t.pulocationid = z1.location_id
+WHERE
+   t.pickup_datetime:: date = '2024-12-14':: date;
+
+CREATE
+OR REPLACE VIEW "public"."taxi_trip_simulated_today_vw" AS
+SELECT
+   'cab_':: text || to_char(t.pickup_datetime, 'HH24MISS':: text) AS trip_id,
+   date_trunc(
+      'day':: text,
+      'now':: text:: date:: timestamp without time zone
+   ) + (
+      t.pickup_datetime - date_trunc('day':: text, t.pickup_datetime)
+   ) AS pickup_datetime,
+   date_trunc(
+      'day':: text,
+      'now':: text:: date:: timestamp without time zone
+   ) + (
+      t.dropoff_datetime - date_trunc('day':: text, t.dropoff_datetime)
+   ) AS dropoff_datetime,
+   t.pulocationid,
+   t.dolocationid,
+   z1."zone" AS pickup_zone,
+   t.passenger_count,
+   t.fare_amount,
+   t.payment_type
+FROM
+   taxi_trip_data t
+   LEFT JOIN taxi_zone_lookup z1 ON t.pulocationid = z1.location_id
+WHERE
+   t.pickup_datetime:: date = '2024-12-14':: date;   
