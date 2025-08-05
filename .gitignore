@@ -14,3 +14,4 @@ profiles.yml # This file is usually in ~/.dbt/, but include as a safeguard
 .DS_Store
 Thumbs.db
 *.sqlite # If you use SQLite for local development databases
+logs
