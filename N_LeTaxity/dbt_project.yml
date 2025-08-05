@@ -1,12 +1,12 @@
 
-name: 'N_Letaxity'
+name: 'N_LeTaxity'
 config-version: 2
 version: '1.0.0'
 
 profile: 'zen_clarity'
 
 models:
-  N_Letaxity:
+  N_LeTaxity:
     +materialized: view
     staging:
       +schema: dev_viper

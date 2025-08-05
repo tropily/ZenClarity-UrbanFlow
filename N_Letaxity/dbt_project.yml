@@ -1,9 +1,0 @@
-name: 'N_LeTaxity'
-config-version: 2
-version: '1.0.0'
-
-profile: 'nyc_taxi_db'
-
-models:
-  N_LeTaxity:
-    +materialized: view
