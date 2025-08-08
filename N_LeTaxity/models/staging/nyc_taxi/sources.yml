@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: nyc_taxi_db
+    database: nyc_taxi_db
+    schema: batch_data
+    tables:
+      - name: trip_data
+      - name: taxi_zone_lookup

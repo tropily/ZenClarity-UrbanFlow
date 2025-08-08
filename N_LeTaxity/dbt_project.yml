@@ -9,11 +9,8 @@ models:
   N_LeTaxity:
     +materialized: view
     staging:
-      +schema: dev_viper
     intermediate:
-      +schema: dev_viper
     marts:
-      +schema: dev_viper
 
 
 # Configuring models
