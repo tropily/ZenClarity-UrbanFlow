@@ -1,7 +1,0 @@
-#Virtual Environment
-venv
-
-#dbt artifacts
-target/
-dbt_packages/
-logs/
