@@ -1,0 +1,9 @@
+version: 2
+models:
+  - name: agg_daily_trips
+    description: "A mart model that aggregates daily trips by pickup zone."
+    columns:
+      - name: total_trips
+        description: "Total number of trips aggregated by pickup zone and time."
+        tests:
+          - not_null

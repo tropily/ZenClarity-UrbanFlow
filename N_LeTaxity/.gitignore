@@ -1,4 +1,10 @@
-venv/
+
+# Mono-repo ignores for the N_LeTaxity project
+N_LeTaxity/venv/
+N_LeTaxity/target/
+N_LeTaxity/dbt_packages/
+N_LeTaxity/logs/
+
 target/
 dbt_packages/
 logs/
