@@ -7,3 +7,16 @@ models:
         description: "Total number of trips aggregated by pickup zone and time."
         tests:
           - not_null
+  - name: avg_passenger_count_by_cab_type
+    description: "Average number of passengers per trip, grouped by cab type."
+    columns:
+      - name: cab_type
+        description: "The type of taxi (e.g., green, yellow)."
+        tests:
+          - not_null
+      - name: average_passenger_count
+        description: "The average number of passengers, rounded to two decimal places."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
