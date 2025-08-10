@@ -1,6 +1,4 @@
--- switch to 'table' later if needed
-{{ config(materialized='view') }}
-
+-- switch to 'table' later if needed{{ config(materialized='view') }}
 
 with trips as (
   select
@@ -20,8 +18,8 @@ with trips as (
 zones as (
   select
     location_id,
-    zone       as pickup_zone,
-    borough    as pickup_borough
+    zone    as pickup_zone,
+    borough as pickup_borough
   from {{ ref('stg_nyc_taxi__taxi_zone_lookup') }}
 )
 
@@ -29,12 +27,12 @@ select
   t.*,
   z.pickup_zone,
   z.pickup_borough,
-  date(t.pickup_at)                            as pickup_date,
-  to_char(date_trunc('month', t.pickup_at), 'YYYY-MM') as pickup_month_ym,
-  extract(hour from t.pickup_at)               as pickup_hour,
-  datediff('minute', t.pickup_at, t.dropoff_at) as trip_duration_min
+  CAST(t.pickup_at AS DATE)                              as pickup_date,
+  CAST(DATE_TRUNC('month', t.pickup_at) AS DATE)         as pickup_month,
+  TO_CHAR(DATE_TRUNC('month', t.pickup_at), 'YYYY-MM')   as pickup_month_ym,
+  EXTRACT(hour FROM t.pickup_at)                         as pickup_hour,
+  DATEDIFF('minute', t.pickup_at, t.dropoff_at)          as trip_duration_min
 from trips t
 left join zones z
   on t.pickup_location_id = z.location_id
-where t.dropoff_at >= t.pickup_at  -- basic data sanity 
---and t.passenger_count > 0
+where t.dropoff_at >= t.pickup_at
