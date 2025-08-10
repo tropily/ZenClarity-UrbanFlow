@@ -1,0 +1,130 @@
+# Project Plan: Zen_Clarity Modern Data Warehouse (Monorepo)
+
+Overall Project Goal: To establish a robust, version-controlled (Git) monorepo (`Zen_Clarity`) containing dbt projects for data transformation on Snowflake and Redshift (sourcing from S3), with a future vision for EMR Hive benchmarking and Airflow orchestration.
+
+Your Daily Commitment: Dedicate 4 hours each day, with 1 to 1.5 hours specifically for active learning/skill improvement.
+---
+## Daily Check-in Structure
+
+At the start or end of each 4-hour block, use these prompts to review and plan:
+
+1.  Achievements (Yesterday/Today): What specific tasks did I complete?
+2.  Plan (Today/Tomorrow): What are the top 1-3 tasks I will focus on next?
+3.  Blockers/Challenges: What's slowing me down or confusing me? (Document these for focused learning or problem-solving).
+4.  Learning Focus: What specific concept, tool (Git, dbt, SQL, Linux, AWS service), or troubleshooting method will I research/practice today?
+
+---
+
+## Full Work Breakdown Structure (WBS) for Progress Tracking
+
+Use this detailed WBS to mark your progress as you complete each task.
+
+### I. Project Foundation & Monorepo Setup
+
+ 1.0 Establish `Zen_Clarity` Monorepo (Git)
+     1.1 Create `Zen_Clarity` Root Directory: `/mnt/c/Users/Peak/Zen_Clarity`
+     1.2 Navigate into `Zen_Clarity` Directory
+     1.3 Initialize Git Repository for `Zen_Clarity`: `git init`
+     1.4 Create Top-Level `.gitignore` for Monorepo (add `/dbt_venv/`, `/target/`, etc.)
+     1.5 (Optional) Rename initial Git branch to `main`: `git branch -m main`
+ 2.0 Remote Git Repository Setup (`Zen_Clarity`)
+     2.1 Create Private GitHub Repository: `tropily/Zen_Clarity`
+     2.2 Add Remote Origin to Local `Zen_Clarity` Repo: `git remote add origin <URL>`
+
+ 3.0 Integrate Existing `N_LeTaxity` Project
+     3.1 Clone Current `N_LeTaxity` GitHub Repo (to a temporary location outside `Zen_Clarity`)
+     3.2 Navigate into Cloned `N_LeTaxity` Directory
+     3.3 Remove Old Git History (`.git` folder): `rm -rf .git`
+     3.4 Return to Parent Directory of Temporary Clone
+     3.5 Move "De-Git-ified" `N_LeTaxity` Directory into `Zen_Clarity`: `mv N_LeTaxity /mnt/c/Users/Peak/Zen_Clarity/`
+
+### II. `N_LeTaxity` Core Dbt & Snowflake Setup
+
+ 1.0 Set Up `N_LeTaxity` Dbt Environment
+     1.1 Navigate into `Zen_Clarity/N_LeTaxity` Directory
+     1.2 Create Python Virtual Environment: `python3 -m venv dbt_venv`
+     1.3 Activate Virtual Environment: `source dbt_venv/bin/activate`
+     1.4 Install `dbt-snowflake` within Activated Venv: `pip install dbt-snowflake`
+     1.5 Verify Dbt Installation: `dbt --version`
+     1.6 Initialize Dbt Project Structure for `N_LeTaxity`: `dbt init`
+ 2.0 Configure Dbt Profiles (Snowflake - Dev/Prod)
+     2.1 Open/Create `~/.dbt/profiles.yml`
+     2.2 Add Snowflake Profile Configuration (e.g., `nyc_taxi_db` profile with `dev` and `prod` targets)
+     2.3 Link `N_LeTaxity` `dbt_project.yml` to the Snowflake Profile
+     2.4 Test Dbt Connection to Snowflake: `dbt debug`
+ 3.0 Snowflake Data Ingestion Infrastructure Setup (Pre-dbt)
+     3.1 Connect to Snowflake (UI/SnowSQL)
+     3.2 Ensure `nyc_taxi_db` Database Exists
+     3.3 Ensure `batch_data` Schema Exists (`USE DATABASE nyc_taxi_db; USE SCHEMA batch_data;`)
+     3.4 Create Storage Integration (`s3_batch_data_integration`)
+     3.5 Create File Format (`parquet_format`)
+     3.6 Create External Stages (`S3_STAGE_TRIP_DATA`, `S3_NYC_TAXI_ZONE_LOOKUP`)
+ 4.0 Initial Data Loading into Raw Tables (Snowflake)
+     4.1 Create Destination Tables (`trip_data`, `TAXI_ZONE_LOOKUP`)
+     4.2 Execute `COPY INTO` commands for initial load of raw data from S3
+ 5.0 Develop `N_LeTaxity` Dbt Models (Snowflake)
+     5.1 Define Dbt Sources: Create `models/staging/nyc/_nyc__sources.yml` and declare `trip_data`, `taxi_zone_lookup` as sources.
+     5.2 Implement Staging Models: Create `models/staging/nyc/stg_nyc__trip_data.sql`, `stg_nyc__taxi_zone_lookup.sql`.
+     5.3 Add Basic Model Tests (e.g., `not_null`, `unique`) to YAML for staging models.
+     5.4 Implement Intermediate Model: Create `models/intermediate/int_nyc__joined_trip_data.sql`.
+     5.5 Implement Initial Mart Models: Create `models/marts/nyc_taxi_dashboard/agg_monthly_cab_type_summary.sql`, `agg_pickup_zone_fare.sql`.
+     5.6 Run Dbt Models for Snowflake (Dev target): `dbt run --target dev`
+     5.7 Run Dbt Tests for Snowflake (Dev target): `dbt test --target dev`
+ 6.0 Dbt Documentation & Version Control
+     6.1 Generate Dbt Documentation: `dbt docs generate`
+     6.2 Serve Dbt Documentation Locally: `dbt docs serve`
+     6.3 Deactivate `dbt_venv`: `deactivate`
+     6.4 Navigate to `Zen_Clarity` Root
+     6.5 Stage All Changes in Monorepo: `git add .`
+     6.6 Commit Changes: `git commit -m "feat: Completed N_LeTaxity basic dbt setup for Snowflake"`
+     6.7 Push to GitHub Remote: `git push`
+
+### III. Cross-Platform Dbt Modeling (Redshift)
+
+ 1.0 Configure Dbt Profiles (Redshift - Dev/Prod)
+     1.1 Open `~/.dbt/profiles.yml`
+     1.2 Add Redshift Profile Configuration (e.g., `redshift_analytics` profile with `dev` and `prod` targets)
+     1.3 Test Dbt Connection to Redshift: `dbt debug --profile redshift_analytics`
+     1.4 (If necessary) Create Redshift Database/Schema for dbt deployments.
+ 2.0 Deploy `N_LeTaxity` Dbt Models to Redshift
+     2.1 Activate `N_LeTaxity` `dbt_venv`
+     2.2 Adapt `N_LeTaxity` Dbt Models for Redshift (if any SQL dialect adjustments needed)
+     2.3 Run Dbt Models for Redshift (Dev target): `dbt run --target redshift_analytics`
+     2.4 Run Dbt Tests for Redshift (Dev target): `dbt test --target redshift_analytics`
+     2.5 Deactivate `dbt_venv`
+     2.6 Commit and Push Changes to `Zen_Clarity` Monorepo
+
+### IV. EMR Hive Benchmarking
+
+ 1.0 EMR Cluster Setup
+     1.1 Research and Plan EMR Cluster Configuration (instance types, nodes, software)
+     1.2 Launch an EMR Cluster with Hive installed
+     1.3 Connect to Hive on EMR (e.g., via SSH, Beeline, or Hue)
+ 2.0 Prepare Data for Hive Benchmarking
+     2.1 Create Hive External Tables pointing to S3 Data (your raw/staged data)
+ 3.0 Execute & Analyze Benchmarks
+     3.1 Translate Benchmark Queries into HiveQL (if necessary)
+     3.2 Execute Benchmark Queries on EMR Hive
+     3.3 Execute Same Benchmark Queries on Snowflake and Redshift
+     3.4 Collect Performance Metrics (execution time, resource usage) for all three platforms
+     3.5 Analyze and Compare Results
+     3.6 Commit and Push Benchmarking Scripts/Findings to `Zen_Clarity` Monorepo
+
+### V. Future Integrations & Expansion
+
+ 1.0 Add Additional Dbt Projects
+     1.1 Create `rental_property` directory inside `Zen_Clarity`
+     1.2 Initialize dbt project within `rental_property`
+     1.3 Set up `dbt_venv` and install `dbt-adapter` for `rental_property`'s database
+     1.4 Define dbt models for `rental_property`
+     1.5 Commit new project to `Zen_Clarity` monorepo
+ 2.0 Plan Dbt CI/CD Automation
+     2.1 Research CI/CD platforms (e.g., GitHub Actions, GitLab CI, dbt Cloud)
+     2.2 Design CI/CD pipeline stages (linting, testing, deployment to Dev/Prod from Git branches)
+ 3.0 Plan Airflow Orchestration
+     3.1 Install Airflow (local/managed service)
+     3.2 Define DAGs (Directed Acyclic Graphs) for end-to-end workflow automation (ingestion, EMR jobs, dbt runs)
+     3.3 Integrate dbt into Airflow DAGs
+ 4.0 Deepen EMR/Hive Usage
+     4.1 Implement more complex ETL/processing in EMR/PySpark
+     4.2 Explore other EMR frameworks (e.g., Spark for advanced analytics)
