@@ -2,7 +2,7 @@
 
 select
   cab_type,
-  avg(passenger_count) as avg_passenger_count
+  pickup_month,
+  count(*) as trip_count
 from {{ ref('int_nyc__trip_zone') }}
-where passenger_count is not null
-group by 1
+group by 1,2
