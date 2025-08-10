@@ -1,22 +1,43 @@
 version: 2
 models:
-  - name: agg_daily_trips
-    description: "A mart model that aggregates daily trips by pickup zone."
-    columns:
-      - name: total_trips
-        description: "Total number of trips aggregated by pickup zone and time."
-        tests:
-          - not_null
-  - name: avg_passenger_count_by_cab_type
-    description: "Average number of passengers per trip, grouped by cab type."
+  - name: agg_monthly_cab_type_trip_counts
     columns:
       - name: cab_type
-        description: "The type of taxi (e.g., green, yellow)."
-        tests:
-          - not_null
-      - name: average_passenger_count
-        description: "The average number of passengers, rounded to two decimal places."
-        tests:
-          - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= 0"
+        tests: [not_null]
+      - name: pickup_month
+        tests: [not_null]
+      - name: trip_count
+        tests: [not_null]
+
+  - name: agg_avg_fare_by_pickup_zone
+    columns:
+      - name: pickup_zone
+        tests: [not_null]
+      - name: avg_fare
+        tests: [not_null]
+
+  - name: agg_avg_passenger_count_by_cab_type
+    columns:
+      - name: cab_type
+        tests: [not_null]
+      - name: avg_passenger_count
+        tests: [not_null]
+
+  - name: agg_busiest_pickup_zone
+    columns:
+      - name: grain
+        description: "'overall' or 'by_month'"
+        tests: [not_null]
+      - name: pickup_zone
+        tests: [not_null]
+      - name: total_trips
+        tests: [not_null]
+
+  - name: agg_avg_trip_duration_by_cab_type_month
+    columns:
+      - name: cab_type
+        tests: [not_null]
+      - name: pickup_month
+        tests: [not_null]
+      - name: avg_trip_duration_min
+        tests: [not_null]
