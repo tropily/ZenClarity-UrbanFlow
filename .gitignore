@@ -1,3 +1,10 @@
 venv/
 N_LeTaxity/venv/
 logs/
+
+# dbt
+venv/
+target/
+logs/
+dbt_packages/
+
