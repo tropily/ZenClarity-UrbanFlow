@@ -8,3 +8,10 @@ N_LeTaxity/logs/
 target/
 dbt_packages/
 logs/
+
+# dbt
+venv/
+target/
+logs/
+dbt_packages/
+
