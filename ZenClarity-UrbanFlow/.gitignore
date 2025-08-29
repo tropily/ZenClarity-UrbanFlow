@@ -1,0 +1,48 @@
+# ------------------------------
+# Python / Environment
+# ------------------------------
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtualenv / Pipenv / Poetry
+.env
+.venv
+# Packaged artifacts
+*.zip
+*.tar
+*.gz
+
+*.egg-info/
+dist/
+build/
+
+# ------------------------------
+# dbt Generated
+# ------------------------------
+dbt/target/
+dbt/logs/
+dbt/.user.yml
+
+# ------------------------------
+# OS / Editor
+# ------------------------------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# ------------------------------
+# Jupyter / Notebooks
+# ------------------------------
+.ipynb_checkpoints/
+*.ipynb_checkpoints/
+
+# ------------------------------
+# Misc
+# ------------------------------
+*.log
+*.tmp

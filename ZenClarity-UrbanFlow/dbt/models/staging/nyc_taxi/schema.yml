@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: stg_nyc_taxi__trip_data
+    columns:
+      - name: vendor_id
+        tests:
+          - not_null
+      - name: pickup_at
+        tests:
+          - not_null
+      - name: dropoff_at
+        tests:
+          - not_null
+
+  - name: stg_nyc_taxi__taxi_zone_lookup
+    columns:
+      - name: location_id
+        tests:
+          - not_null
+          - unique
