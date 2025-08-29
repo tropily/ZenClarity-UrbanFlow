@@ -1,17 +1,16 @@
 
-# Mono-repo ignores for the N_LeTaxity project
-N_LeTaxity/venv/
-N_LeTaxity/target/
-N_LeTaxity/dbt_packages/
-N_LeTaxity/logs/
-
-target/
-dbt_packages/
-logs/
-
-# dbt
+# Python virtual environment
 venv/
-target/
-logs/
-dbt_packages/
+
+# dbt generated directories and files
+dbt/dbt_packages/
+dbt/logs/
+dbt/target/
+dbt/dbt_project.yml.save
+
+# Temporary files created by editors or OS
+*.save
+*.log
+.DS_Store
+
 
