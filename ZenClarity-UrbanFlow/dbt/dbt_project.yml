@@ -1,26 +1,26 @@
 
-name: N_LeTaxity
-version: '1.0.0'        # <-- must be a string
-config-version: 2       # <-- required
+name: 'zenclarity_urbanflow'     
+version: '1.0.0'
+config-version: 2
 
-profile: zen_clarity
+profile: zenclarity_urbanflow     
+
 model-paths: ["models"]
-analysis-paths: ["analysis"]
+analysis-paths: ["analyses"]      
 test-paths: ["tests"]
 seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
-# (rest of your config, including the explicit schemas for staging/int/mart)
+
+docs:
+  generate:
+    - README.md
+
 models:
-  N_LeTaxity:
+  zenclarity_urbanflow:          
     +materialized: view
     staging:      { +schema: dev_viper_stg,  +tags: ['staging'] }
     intermediate: { +schema: dev_viper_int,  +tags: ['intermediate'] }
     marts:        { +schema: dev_viper_mart, +tags: ['marts'] }
 
-
-# Configuring models
-# Full documentation: https://docs.getdbt.com/docs/configuring-models
-
-# In this example config, we tell dbt to build all models in the example/
