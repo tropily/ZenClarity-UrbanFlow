@@ -25,7 +25,7 @@ Note: Streaming operates near-real-time (sub-minute) using Serverless AWS servic
 
 ## 🗺️ Architecture Diagram
 
-![Architecture Diagram](docs/arch-diagrams/N_LeTaxity_Architechture_Diagram.jpg)
+![Architecture Diagram](docs/arch-diagrams/N_LeTaxity_arch_diagrams.jpg)
 
 ---
 
