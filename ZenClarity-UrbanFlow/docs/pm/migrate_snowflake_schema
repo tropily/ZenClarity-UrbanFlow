@@ -1,0 +1,228 @@
+# Snowflake Multi-Schema Migration Pack — Manual (No Macro Edition)
+
+This pack replaces the macro-based approach with an explicit, manual mapping of schemas per layer. It’s designed to help you build muscle memory with Snowflake + dbt.
+
+---
+
+## 0) Safety Snapshot (recommended)
+Create a zero-copy clone of your current modeling schema for easy rollback.
+```sql
+use role ACCOUNTADMIN;
+create or replace schema NYC_TAXI_DB.dev_viper_backup clone NYC_TAXI_DB.dev_viper;
+```
+> Drop the backup later after you’re confident: `drop schema NYC_TAXI_DB.dev_viper_backup cascade;`
+
+---
+
+## 1) Snowflake SQL — Schemas & Grants
+> Run as a Snowflake admin role (e.g., SECURITYADMIN). Replace `DEV_WH` with your warehouse.
+
+```sql
+-- snowflake_dev_viper_schemas_and_grants.sql (Manual Edition)
+-- Purpose: Pre-provision schemas and grants for dbt to build into explicit dev_viper_* layers
+-- Assumes: Database = NYC_TAXI_DB, dbt role/user = DBT_DEV_ROLE / DBT_DEV_USER_VIPER
+
+-- Context
+use role SECURITYADMIN;
+use database NYC_TAXI_DB;
+use warehouse DEV_WH;  -- TODO: set your dev warehouse (e.g., TRANSFORMING_WH)
+
+-- Ensure dbt role ↔ user (safe if already done)
+grant role DBT_DEV_ROLE to user DBT_DEV_USER_VIPER;
+
+-- Create modeling schemas (DEV)
+create schema if not exists dev_viper_stg;
+create schema if not exists dev_viper_int;
+create schema if not exists dev_viper_mart;
+
+-- Grants for dbt builders (DBT_DEV_ROLE)
+grant usage on database NYC_TAXI_DB to role DBT_DEV_ROLE;
+
+grant usage on schema dev_viper_stg  to role DBT_DEV_ROLE;
+grant usage on schema dev_viper_int  to role DBT_DEV_ROLE;
+grant usage on schema dev_viper_mart to role DBT_DEV_ROLE;
+
+grant create table, create view, create stage, create function
+  on schema dev_viper_stg  to role DBT_DEV_ROLE;
+grant create table, create view, create stage, create function
+  on schema dev_viper_int  to role DBT_DEV_ROLE;
+grant create table, create view, create stage, create function
+  on schema dev_viper_mart to role DBT_DEV_ROLE;
+
+-- (Optional) BI read-only role setup (adjust if you already have one)
+create role if not exists BI_READERS;
+grant usage on database NYC_TAXI_DB to role BI_READERS;
+grant usage on schema dev_viper_mart to role BI_READERS;
+grant select on all views  in schema dev_viper_mart to role BI_READERS;
+grant select on all tables in schema dev_viper_mart to role BI_READERS;
+grant select on future views  in schema dev_viper_mart to role BI_READERS;
+grant select on future tables in schema dev_viper_mart to role BI_READERS;
+
+-- Quick permission smoke test (as dbt role)
+use role DBT_DEV_ROLE;
+create table if not exists dev_viper_stg.__perm_check (x int);
+drop table if exists dev_viper_stg.__perm_check;
+```
+
+> **Tip**: Consider default privileges for your own builder role on STG/INT if you use object ownership policies; the grants above are usually enough.
+
+---
+
+## 2) dbt Changes — Explicit Schemas (No Macro)
+
+### 2.1 Remove/disable the schema macro (if present)
+If you previously used `macros/generate_schema_name.sql`, rename it so dbt won’t apply it:
+```
+mv macros/generate_schema_name.sql macros/_generate_schema_name_disabled.sql
+```
+> Keeping the file around (renamed) helps you switch back later if you want.
+
+### 2.2 `dbt_project.yml` — set schemas per layer explicitly
+```yaml
+models:
+  N_LeTaxity:
+    +materialized: view
+
+    staging:
+      +schema: dev_viper_stg
+      +tags: ['staging']
+
+    intermediate:
+      +schema: dev_viper_int
+      +tags: ['intermediate']
+
+    marts:
+      +schema: dev_viper_mart
+      +tags: ['marts']
+```
+
+### 2.3 `profiles.yml` — Snowflake dev target
+Your base schema in the profile (e.g., `dev_viper`) is fine; model-level `+schema` overrides it.
+```yaml
+schema: dev_viper
+role: DBT_DEV_ROLE
+user: DBT_DEV_USER_VIPER
+database: NYC_TAXI_DB
+warehouse: <YOUR_DEV_WH>
+threads: 4
+```
+
+### 2.4 `models/staging/nyc_taxi/sources.yml` — sources stay pointed to RAW
+```yaml
+version: 2
+sources:
+  - name: nyc_taxi_db
+    database: NYC_TAXI_DB
+    schema: BATCH_DATA     # change to RAW if your raw is BATCH_DATA.RAW
+    tables:
+      - name: TRIP_DATA
+      - name: TAXI_ZONE_LOOKUP
+```
+
+---
+
+## 3) Build & Sanity-Check
+Run intentionally, layer by layer:
+```bash
+dbt clean && dbt deps
+dbt debug -t dev
+dbt parse -t dev
+dbt ls    -t dev -s staging intermediate marts
+
+dbt build -t dev -s tag:staging
+dbt build -t dev -s intermediate
+dbt build -t dev -s marts.nyc_taxi_dashboard
+```
+
+Quick QA in Snowflake:
+```sql
+show tables in schema NYC_TAXI_DB.dev_viper_stg;
+show views  in schema NYC_TAXI_DB.dev_viper_int;
+show views  in schema NYC_TAXI_DB.dev_viper_mart;
+
+select count(*) as new_cnt from dev_viper_mart.agg_daily_trips;
+/* Optional: compare to legacy object if it existed previously
+select count(*) as old_cnt from dev_viper.agg_daily_trips;
+*/
+```
+
+---
+
+## 4) Git & PR
+```bash
+git checkout -b feat/snowflake-explicit-schemas
+git add dbt_project.yml models/staging/nyc_taxi/sources.yml
+git commit -m "chore: explicit schemas per layer (dev_viper_stg/int/mart), no macro"
+git push -u origin feat/snowflake-explicit-schemas
+```
+PR body:
+```md
+# chore: explicit schemas per layer (dev_viper_stg/int/mart), no macro
+
+## Why
+- Build muscle memory in Snowflake/dbt by setting schemas explicitly.
+- Keep Redshift & Snowflake patterns aligned at the namespace level.
+
+## Runbook
+1. Apply Snowflake schemas & grants.
+2. dbt: debug → parse → build staging → intermediate → marts.
+3. QA row counts and logic (pickup_month, trip_duration).
+4. BI reads from DEV_VIPER_MART.
+
+## Notes
+- Sources: NYC_TAXI_DB.BATCH_DATA (TRIP_DATA, TAXI_ZONE_LOOKUP)
+```
+
+---
+
+## 5) Optional — Manual PROD Promotion (No Macro)
+Provision prod schemas & grants, then flip `dbt_project.yml` to prod:
+```sql
+-- Snowflake (SECURITYADMIN)
+use database NYC_TAXI_DB;
+create schema if not exists prod_viper_stg;
+create schema if not exists prod_viper_int;
+create schema if not exists prod_viper_mart;
+-- mirror grants for prod roles; BI reads prod_viper_mart
+```
+
+```yaml
+# dbt_project.yml (prod mapping)
+models:
+  N_LeTaxity:
+    staging:      { +schema: prod_viper_stg }
+    intermediate: { +schema: prod_viper_int }
+    marts:        { +schema: prod_viper_mart }
+```
+Then:
+```bash
+dbt build -t snowflake_prod -s intermediate+
+dbt build -t snowflake_prod -s marts.nyc_taxi_dashboard
+```
+
+---
+
+## 6) Cleanup & Rollback
+- After acceptance: drop obsolete objects in `NYC_TAXI_DB.dev_viper` (the old single schema) to avoid confusion.
+- Rollback: re-point `dbt_project.yml` to the old `dev_viper` schema values, or restore from the clone:
+```sql
+create or replace schema NYC_TAXI_DB.dev_viper clone NYC_TAXI_DB.dev_viper_backup;
+```
+
+---
+
+## 7) BI Default Privileges (quality of life)
+Ensure BI role auto-gets read on newly created MART objects:
+```sql
+use role SECURITYADMIN;
+grant select on future views  in schema dev_viper_mart to role BI_READERS;
+grant select on future tables in schema dev_viper_mart to role BI_READERS;
+```
+
+---
+
+### Notes & Tips
+- Folder-level `+schema` overrides profile-level schema, which is perfect for this manual approach.
+- Ephemeral models won’t create objects; that’s expected.
+- Keep naming consistent and lowercase to avoid cross-warehouse surprises.
+- When you’re ready, you can always re-enable the macro for environment suffixing without changing file layout.
