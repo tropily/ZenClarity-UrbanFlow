@@ -1,0 +1,16 @@
+
+# Python virtual environment
+venv/
+
+# dbt generated directories and files
+dbt/dbt_packages/
+dbt/logs/
+dbt/target/
+dbt/dbt_project.yml.save
+
+# Temporary files created by editors or OS
+*.save
+*.log
+.DS_Store
+
+

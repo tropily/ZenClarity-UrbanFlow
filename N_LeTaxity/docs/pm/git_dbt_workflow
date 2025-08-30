@@ -1,0 +1,127 @@
+# ================================
+# 0) One-time local setup (machine)
+# ================================
+# pick a workspace directory
+mkdir -p /home/viperuser/projects && cd /home/viperuser/projects
+
+# clone (first time only)
+git clone https://github.com/tropily/Zen_Clarity
+cd Zen_Clarity/N_LeTaxity
+
+# Python venv (if not already created)
+python3 -m venv venv
+source venv/bin/activate
+
+# adapters (install what you need)
+pip install --upgrade pip
+pip install dbt-core dbt-snowflake dbt-redshift
+
+# sanity: ignore build artifacts
+echo -e "\n# dbt\nvenv/\ntarget/\nlogs/\ndbt_packages/\n" >> .gitignore
+
+# ==========================
+# 1) Pull latest & sanity check
+# ==========================
+git checkout main
+git pull
+
+# Optional: make pushing new branches simpler
+git config --global push.autoSetupRemote true
+
+# dbt sanity (pick a target you know works)
+dbt --version
+dbt debug -t dev   # snowflake dev, or use -t redshift_dev when ready
+dbt ls             # see if dbt "sees" your models
+
+# ==========================
+# 2) Create a feature branch
+# ==========================
+# naming pattern: feat/<area>-<short-desc>
+BRANCH=feat/redshift-port-$(date +%Y%m%d)
+git checkout -b "$BRANCH"
+
+# ==========================
+# 3) Make scoped changes
+# ==========================
+# examples (edit as needed):
+# - add macros/date_utils.sql
+# - update models/staging/nyc_taxi/sources.yml
+# - tweak intermediate or marts for cross-db
+
+# quick self-checks
+git status
+dbt parse -t redshift_dev
+dbt ls     -t redshift_dev -s staging intermediate marts
+
+# build small to large (Redshift DEV)
+dbt build -t redshift_dev -s staging
+dbt build -t redshift_dev -s int_nyc__trip_zone
+dbt build -t redshift_dev -s marts.nyc_taxi_dashboard
+
+# If parser/cache gets weird:
+# dbt clean && dbt deps && dbt parse
+
+# ==========================
+# 4) Commit in logical chunks
+# ==========================
+git add N_LeTaxity/macros/*.sql
+git commit -m "feat(redshift): add cross-db macro for datediff minutes"
+
+git add N_LeTaxity/models/staging/nyc_taxi/sources.yml
+git commit -m "chore(redshift): sources point to public.* in RS"
+
+git add N_LeTaxity/models/**/*
+git commit -m "feat(marts): make NYC dashboard models RS-compatible"
+
+# push branch (first push sets upstream)
+git push -u origin "$BRANCH"
+
+# ==========================
+# 5) Open PR → main
+# ==========================
+# On GitHub:
+#   - Base: main
+#   - Compare: $BRANCH
+#   - Title: feat(redshift): port NYC Taxi models to Redshift
+#   - Description: summary, how tested (dbt build -t redshift_dev), warehouse impact
+
+# Optional local diff before PR:
+git log --oneline main.."$BRANCH"
+git diff --name-status main.."$BRANCH"
+
+# ==========================
+# 6) After PR merge: sync local
+# ==========================
+git checkout main
+git pull
+
+# Optional: delete feature branch locally & remotely
+git branch -d "$BRANCH"
+git push origin --delete "$BRANCH"
+
+# ==========================
+# 7) Promote to PROD (warehouse)
+# ==========================
+# Ensure profiles.yml has redshift_prod with schema prod_viper
+source venv/bin/activate
+dbt debug -t redshift_prod
+
+# Build intermediate + dependents, then the dashboard
+dbt build -t redshift_prod -s int_nyc__trip_zone+
+dbt build -t redshift_prod -s marts.nyc_taxi_dashboard
+
+# ==========================
+# 8) Docs & verification
+# ==========================
+dbt docs generate -t redshift_dev
+dbt docs serve    -t redshift_dev
+# verify lineage: marts → int_nyc__trip_zone → staging → sources(public.*)
+
+# ==========================
+# 9) Daily sanity quicklist
+# ==========================
+# - git status (clean?)
+# - git pull (up to date?)
+# - dbt debug (-t <target>)
+# - dbt ls -s <selector> (does dbt see it?)
+# - dbt build -s <selector> -t <target>
