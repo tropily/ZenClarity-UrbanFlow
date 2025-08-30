@@ -46,3 +46,8 @@ config/*.sh
 # ------------------------------
 *.log
 *.tmp
+
+# Draft diagram notes
+/docs/arch_diagrams/*.txt
+# Lambda layer bundles (rebuild locally when needed)
+scripts/helpers/pipeline_logger_layer/*.zip
