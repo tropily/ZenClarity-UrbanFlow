@@ -34,7 +34,7 @@ Built with AWS, dbt, Redshift, and Snowflake, it showcases both batch and stream
 
 ---
 
-## 📂 Repo Structure (Option C hybrid)
+## 📂 Repo Structure 
 
 ZenClarity-UrbanFlow/  
 ├── analytics/          # notebooks + Streamlit app (screenshots archived)  
