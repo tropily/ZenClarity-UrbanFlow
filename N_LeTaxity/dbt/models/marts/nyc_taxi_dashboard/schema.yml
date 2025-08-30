@@ -1,0 +1,43 @@
+version: 2
+models:
+  - name: agg_monthly_cab_type_trip_counts
+    columns:
+      - name: cab_type
+        tests: [not_null]
+      - name: pickup_month
+        tests: [not_null]
+      - name: trip_count
+        tests: [not_null]
+
+  - name: agg_avg_fare_by_pickup_zone
+    columns:
+      - name: pickup_zone
+        tests: [not_null]
+      - name: avg_fare
+        tests: [not_null]
+
+  - name: agg_avg_passenger_count_by_cab_type
+    columns:
+      - name: cab_type
+        tests: [not_null]
+      - name: avg_passenger_count
+        tests: [not_null]
+
+  - name: agg_busiest_pickup_zone
+    columns:
+      - name: grain
+        description: "'overall' or 'by_month'"
+        tests: [not_null]
+      - name: pickup_zone
+        tests: [not_null]
+      - name: total_trips
+        tests: [not_null]
+
+  - name: agg_avg_trip_duration_by_cab_type_month
+    columns:
+      - name: cab_type
+        tests: [not_null]
+      - name: pickup_month
+        tests: [not_null]
+      - name: avg_trip_duration_min
+        tests: [not_null]

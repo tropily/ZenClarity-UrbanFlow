@@ -2,22 +2,15 @@
 # Python / Environment
 # ------------------------------
 venv/
+.env
+.venv
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-
-# Virtualenv / Pipenv / Poetry
-.env
-.venv
-# Packaged artifacts
-*.zip
-*.tar
-*.gz
-
 *.egg-info/
-dist/
 build/
+dist/
 
 # ------------------------------
 # dbt Generated
@@ -42,13 +35,14 @@ Thumbs.db
 *.ipynb_checkpoints/
 
 # ------------------------------
+# Local env / secrets (do not commit)
+# ------------------------------
+config/*.sh
+.dbt/
+.streamlit/secrets.toml
+
+# ------------------------------
 # Misc
 # ------------------------------
 *.log
 *.tmp
-
-# Local drafts
-*.txt
-
-# Local env scripts (do not commit)
-config/*.sh
