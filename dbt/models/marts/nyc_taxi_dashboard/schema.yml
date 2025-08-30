@@ -1,0 +1,80 @@
+version: 2
+
+models:
+  - name: agg_avg_fare_by_pickup_zone
+    description: "{{ doc('overview') }} Average fare by pickup zone for dashboard visualization."
+    columns:
+      - name: pickup_zone
+        description: "NYC Taxi pickup zone name."
+        tests: [not_null]
+      - name: avg_fare
+        description: "Average fare in USD."
+        tests: [not_null]
+
+  - name: agg_busiest_pickup_zone
+    description: "Zones ranked by trip count (overall or by month)."
+    columns:
+      - name: grain
+        description: "Aggregation grain: 'overall' or 'by_month'."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['overall', 'by_month']
+              quote: true
+      - name: pickup_zone
+        description: "NYC Taxi pickup zone name."
+        tests: [not_null]
+      - name: total_trips
+        description: "Total number of trips for the grain."
+        tests: [not_null]
+
+  - name: agg_monthly_cab_type_trip_counts
+    description: "Monthly trip counts by cab type."
+    columns:
+      - name: cab_type
+        description: "Cab type (e.g., 'yellow', 'green')."
+        tests: [not_null]
+      - name: pickup_month
+        description: "Month of pickup (e.g., '2024-05' or integer month depending on model)."
+        tests: [not_null]
+      - name: trip_count
+        description: "Number of trips in the month for the cab type."
+        tests: [not_null]
+
+  - name: agg_avg_passenger_count_by_cab_type
+    description: "Average passenger count by cab type."
+    columns:
+      - name: cab_type
+        description: "Cab type (e.g., 'yellow', 'green')."
+        tests: [not_null]
+      - name: avg_passenger_count
+        description: "Average number of passengers per trip."
+        tests: [not_null]
+
+  - name: agg_avg_trip_duration_by_cab_type_month
+    description: "Average trip duration by cab type, per month."
+    columns:
+      - name: cab_type
+        description: "Cab type (e.g., 'yellow', 'green')."
+        tests: [not_null]
+      - name: pickup_month
+        description: "Month of pickup (e.g., '2024-05' or integer month depending on model)."
+        tests: [not_null]
+      - name: avg_trip_duration_min
+        description: "Average trip duration in minutes."
+        tests: [not_null]
+
+exposures:
+  - name: streamlit_dashboard
+    type: application
+    description: "Streamlit app consuming marts for KPIs and comparisons."
+    url: "https://github.com/tropily/ZenClarity-UrbanFlow"
+    owner:
+      name: Nguyen Le
+      email: 63549662+tropily@users.noreply.github.com
+    depends_on:
+      - ref('agg_avg_fare_by_pickup_zone')
+      - ref('agg_busiest_pickup_zone')
+      - ref('agg_monthly_cab_type_trip_counts')
+      - ref('agg_avg_passenger_count_by_cab_type')
+      - ref('agg_avg_trip_duration_by_cab_type_month')

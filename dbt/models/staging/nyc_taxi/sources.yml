@@ -1,0 +1,52 @@
+version: 2
+
+sources:
+  - name: nyc_taxi_db
+    description: "Raw NYC Taxi datasets (historical + streaming landings) in the warehouse."
+    schema: batch_data
+    tables:
+      - name: trip_data
+        description: "Yellow/Green taxi trips with timestamps, fares, and pickup/dropoff locations."
+        columns:
+          - name: vendorid
+            description: "Raw vendor identifier."
+          - name: pickup_datetime
+            description: "Raw pickup timestamp."
+          - name: dropoff_datetime
+            description: "Raw dropoff timestamp."
+          - name: store_and_fwd_flag
+            description: "Whether the record was stored in vehicle memory before forwarding (Y/N)."
+          - name: ratecodeid
+            description: "NYC TLC rate code category."
+          - name: pulocationid
+            description: "Pickup Taxi Zone Location ID (raw)."
+          - name: dolocationid
+            description: "Dropoff Taxi Zone Location ID (raw)."
+          - name: passenger_count
+          - name: trip_distance
+          - name: fare_amount
+          - name: extra
+          - name: mta_tax
+          - name: tip_amount
+          - name: tolls_amount
+          - name: ehail_fee
+          - name: improvement_surcharge
+          - name: total_amount
+          - name: payment_type
+          - name: trip_type
+          - name: congestion_surcharge
+          - name: airport_fee
+          - name: cab_type
+            description: "Cab type flag (e.g., 'yellow', 'green')."
+          - name: filename_loaded
+            description: "Landing file name for lineage."
+          - name: load_timestamp
+            description: "Ingestion/load timestamp."
+      - name: taxi_zone_lookup
+        description: "Taxi zone reference table (borough, zone, service zone)."
+        columns:
+          - name: locationid
+            description: "Primary key for the taxi zone (raw)."
+          - name: borough
+          - name: zone
+          - name: service_zone

@@ -1,0 +1,21 @@
+
+name: 'zenclarity_urbanflow'     
+version: '1.0.0'
+config-version: 2
+
+profile: zenclarity_urbanflow     
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]      
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+models:
+  zenclarity_urbanflow:          
+    +materialized: view
+    staging:      { +schema: dev_viper_stg,  +tags: ['staging'] }
+    intermediate: { +schema: dev_viper_int,  +tags: ['intermediate'] }
+    marts:        { +schema: dev_viper_mart, +tags: ['marts'] }
+

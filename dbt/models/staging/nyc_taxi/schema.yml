@@ -1,0 +1,78 @@
+version: 2
+
+models:
+  - name: stg_nyc_taxi__trip_data
+    description: >
+      Standardizes raw trip_data: renames columns, enforces basic types,
+      and adds date parts used for downstream aggregation.
+    columns:
+      - name: vendor_id                   # vendorid → vendor_id
+        description: "Vendor identifier."
+      - name: pickup_at                   # pickup_datetime → pickup_at
+        description: "Trip pickup timestamp."
+        tests: [not_null]
+      - name: dropoff_at                  # dropoff_datetime → dropoff_at
+        description: "Trip dropoff timestamp."
+        tests: [not_null]
+      - name: store_and_fwd_flag
+        description: "Whether the record was stored and forwarded later (Y/N)."
+        tests:
+          - accepted_values:
+              values: ['Y', 'N']
+              quote: true
+      - name: ratecodeid
+        description: "Rate code category."
+      - name: pickup_location_id          # pulocationid → pickup_location_id
+        description: "Pickup Taxi Zone Location ID (standardized)."
+        tests:
+          - relationships:
+              to: ref('stg_nyc_taxi__taxi_zone_lookup')
+              field: location_id
+      - name: dropoff_location_id         # dolocationid → dropoff_location_id
+        description: "Dropoff Taxi Zone Location ID (standardized)."
+        tests:
+          - relationships:
+              to: ref('stg_nyc_taxi__taxi_zone_lookup')
+              field: location_id
+      - name: passenger_count
+        description: "Number of passengers reported."
+      - name: trip_distance
+        description: "Trip distance (miles)."
+      - name: fare_amount
+        description: "Base fare amount (USD)."
+      - name: extra
+      - name: mta_tax
+      - name: tip_amount
+      - name: tolls_amount
+      - name: ehail_fee
+      - name: improvement_surcharge
+      - name: total_amount
+        description: "Total charged amount (USD)."
+      - name: payment_type
+        description: "Payment category (e.g., 1=Credit, 2=Cash, etc.)."
+      - name: trip_type
+        description: "Trip type flag (e.g., 1=Street-hail, 2=Dispatch)."
+      - name: congestion_surcharge
+      - name: airport_fee
+      - name: cab_type
+        description: "Cab type (e.g., 'yellow', 'green')."
+      - name: pickup_year                 # derived via YEAR(pickup_datetime)
+        description: "Year of pickup."
+      - name: pickup_month
+        description: "Month of pickup (1-12)."
+      - name: pickup_day
+        description: "Day of month of pickup (1-31)."
+      - name: filename_loaded
+        description: "Source file name for lineage."
+      - name: load_timestamp
+        description: "ETL load/insertion timestamp."
+
+  - name: stg_nyc_taxi__taxi_zone_lookup
+    description: "Standardized taxi zone reference (typed and trimmed)."
+    columns:
+      - name: location_id                 # locationid → location_id
+        description: "Taxi Zone primary key."
+        tests: [not_null, unique]
+      - name: borough
+      - name: zone
+      - name: service_zone
