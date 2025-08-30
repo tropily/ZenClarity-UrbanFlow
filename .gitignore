@@ -49,3 +49,6 @@ Thumbs.db
 
 # Local drafts
 *.txt
+
+# Local env scripts (do not commit)
+config/*.sh
