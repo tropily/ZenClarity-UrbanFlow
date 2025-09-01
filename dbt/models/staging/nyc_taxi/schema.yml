@@ -76,3 +76,38 @@ models:
       - name: borough
       - name: zone
       - name: service_zone
+
+  - name: stg_nyc_taxi__streaming_trips
+    description: >
+      Standardizes live streaming trips: renames columns and aligns with
+      stg_nyc_taxi__trip_data for downstream joins/aggregations.
+    columns:
+      - name: trip_id
+        description: "Streaming trip identifier."
+        tests: [not_null]   # add 'unique' if guaranteed unique
+      - name: pickup_at
+        description: "Trip pickup timestamp."
+        tests: [not_null]
+      - name: dropoff_at
+        description: "Trip dropoff timestamp."
+      - name: pickup_location_id
+        description: "Pickup Taxi Zone Location ID (standardized)."
+        tests:
+          - relationships:
+              to: ref('stg_nyc_taxi__taxi_zone_lookup')
+              field: location_id
+      - name: dropoff_location_id
+        description: "Dropoff Taxi Zone Location ID (standardized)."
+        tests:
+          - relationships:
+              to: ref('stg_nyc_taxi__taxi_zone_lookup')
+              field: location_id
+      - name: passenger_count
+      - name: fare_amount
+      - name: payment_type
+      - name: event_time
+        description: "Event timestamp from the streaming payload."
+      - name: lambda_received_time
+        description: "Ingestion function receive time."
+      - name: inserted_at
+        description: "Warehouse arrival time (used for freshness in prod)."
