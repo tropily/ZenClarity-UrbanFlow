@@ -83,7 +83,7 @@ Results highlight performance trade-offs between Redshift and Snowflake under eq
 * Cumulative trip chart  
 
 **Screenshots:**  
-![Dashboard KPIs](docs/metrics/Streaming-KPI.jpg)  
+
 ![Dashboard Screenshot](docs/metrics/streamlit_live_streaming_dashboard.jpg)
 
 ---
