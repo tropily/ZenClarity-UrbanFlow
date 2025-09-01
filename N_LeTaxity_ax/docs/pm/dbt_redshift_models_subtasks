@@ -63,7 +63,7 @@ Goal: Ready the repo + venv for Redshift work.
     git checkout -b feat/redshift-dbt-model
 
 [ ] 2.2 Ensure venv and adapters (XS)
-    cd N_LeTaxity && source venv/bin/activate
+    cd N_LeTaxity_ax && source venv/bin/activate
     pip install -U dbt-redshift
     dbt --version
 
@@ -109,7 +109,7 @@ Goal: One codebase runs on both Snowflake & Redshift.
 
     dbt_project.yml sections:
         models:
-          N_LeTaxity:
+          N_LeTaxity_ax:
             +materialized: view
             staging:
               +schema: stg
@@ -187,13 +187,13 @@ Goal: Validate the full graph without touching 'public'.
 Goal: Small, reviewable commits; PR to main.
 
 [ ] 5.1 Commit in logical chunks (XS)
-    git add N_LeTaxity/macros/*.sql
+    git add N_LeTaxity_ax/macros/*.sql
     git commit -m "feat(redshift): schema-per-layer + minutes_between macro"
 
-    git add N_LeTaxity/models/staging/nyc_taxi/sources.yml
+    git add N_LeTaxity_ax/models/staging/nyc_taxi/sources.yml
     git commit -m "chore(redshift): sources point to public.*"
 
-    git add N_LeTaxity/models/**/*
+    git add N_LeTaxity_ax/models/**/*
     git commit -m "feat(marts): RS-compatible NYC dashboard marts"
 
 [ ] 5.2 Push branch & open PR (XS)

@@ -6,7 +6,7 @@ mkdir -p /home/viperuser/projects && cd /home/viperuser/projects
 
 # clone (first time only)
 git clone https://github.com/tropily/Zen_Clarity
-cd Zen_Clarity/N_LeTaxity
+cd Zen_Clarity/N_LeTaxity_ax
 
 # Python venv (if not already created)
 python3 -m venv venv
@@ -64,13 +64,13 @@ dbt build -t redshift_dev -s marts.nyc_taxi_dashboard
 # ==========================
 # 4) Commit in logical chunks
 # ==========================
-git add N_LeTaxity/macros/*.sql
+git add N_LeTaxity_ax/macros/*.sql
 git commit -m "feat(redshift): add cross-db macro for datediff minutes"
 
-git add N_LeTaxity/models/staging/nyc_taxi/sources.yml
+git add N_LeTaxity_ax/models/staging/nyc_taxi/sources.yml
 git commit -m "chore(redshift): sources point to public.* in RS"
 
-git add N_LeTaxity/models/**/*
+git add N_LeTaxity_ax/models/**/*
 git commit -m "feat(marts): make NYC dashboard models RS-compatible"
 
 # push branch (first push sets upstream)

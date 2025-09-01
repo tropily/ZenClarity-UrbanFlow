@@ -1,4 +1,4 @@
-## 🚖 N_LeTaxity: NYC Taxi Streaming + Batch Data Pipeline
+## 🚖 N_LeTaxity_ax: NYC Taxi Streaming + Batch Data Pipeline
 
 ### TL;DR
 
@@ -6,7 +6,7 @@
 📦 Redshift + Snowflake performance benchmark
 📊 Real-time Streamlit dashboard
 
-**N_LeTaxity** is a full-stack, cloud-native data engineering project showcasing modern ETL/ELT practices by combining streaming and batch pipelines. The project ingests and processes NYC Taxi data from both an external historical source and a Python-based real-time simulator into scalable S3 data lake. Then modeled and analyzed in Redshift and Snowflake via a comprehensive benchmark and data modeling layer built with dbt. Key insights are then surfaced in a real-time dashboard built with Streamlit
+**N_LeTaxity_ax** is a full-stack, cloud-native data engineering project showcasing modern ETL/ELT practices by combining streaming and batch pipelines. The project ingests and processes NYC Taxi data from both an external historical source and a Python-based real-time simulator into scalable S3 data lake. Then modeled and analyzed in Redshift and Snowflake via a comprehensive benchmark and data modeling layer built with dbt. Key insights are then surfaced in a real-time dashboard built with Streamlit
 
 ---
 
@@ -25,7 +25,7 @@ Note: Streaming operates near-real-time (sub-minute) using Serverless AWS servic
 
 ## 🗺️ Architecture Diagram
 
-![Architecture Diagram](docs/arch-diagrams/N_LeTaxity_arch_diagrams.jpg)
+![Architecture Diagram](docs/arch-diagrams/N_LeTaxity_ax_arch_diagrams.jpg)
 
 ---
 
@@ -49,7 +49,7 @@ Note: Streaming operates near-real-time (sub-minute) using Serverless AWS servic
 │   └── tests/
 ├── docs/
 │   ├── arch-diagrams/
-│   │   └── N_LeTaxity_Architechture_Diagram.jpg
+│   │   └── N_LeTaxity_ax_Architechture_Diagram.jpg
 │   ├── metrics/
 │   │   └── Snowflake_vs_Redshift_Benchmark.jpg
 │   └── readme_images/
