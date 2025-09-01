@@ -1,5 +1,5 @@
 
-name: N_LeTaxity
+name: N_LeTaxity_ax
 version: '1.0.0'        # <-- must be a string
 config-version: 2       # <-- required
 
@@ -13,7 +13,7 @@ snapshot-paths: ["snapshots"]
 
 # (rest of your config, including the explicit schemas for staging/int/mart)
 models:
-  N_LeTaxity:
+  N_LeTaxity_ax:
     +materialized: view
     staging:      { +schema: dev_viper_stg,  +tags: ['staging'] }
     intermediate: { +schema: dev_viper_int,  +tags: ['intermediate'] }

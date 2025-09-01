@@ -4,7 +4,7 @@ _A concise, copy‑pasteable guide covering the exact steps, commands, files, an
 
 ## Scope
 
-- Project root: `/home/viperuser/projects/zen_clarity/N_LeTaxity`
+- Project root: `/home/viperuser/projects/zen_clarity/N_LeTaxity_ax`
 - Warehouse: **Snowflake**
 - dbt version: `1.10.x`
 - You will create:
@@ -120,7 +120,7 @@ models:
 **Build & test (DEV):**
 
 ```bash
-cd N_LeTaxity
+cd N_LeTaxity_ax
 source venv/bin/activate
 dbt run  -s int_nyc__trip_zone --target dev
 dbt test -s int_nyc__trip_zone --target dev
@@ -358,7 +358,7 @@ git pull
 Make sure your `~/.dbt/profiles.yml` has `prod` target with the correct `schema` (e.g., `PROD_VIPER`). Then:
 
 ```bash
-cd N_LeTaxity
+cd N_LeTaxity_ax
 source venv/bin/activate
 
 dbt run  -s int_nyc__trip_zone+ --target prod
