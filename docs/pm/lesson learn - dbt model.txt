@@ -1,0 +1,72 @@
+STRAIGHT TALK — COACH FEEDBACK (Data Engineering & PM)
+
+Strengths (keep doubling down)
+- Relentless execution: You worked the WBS step-by-step, asked for targeted help, and shipped staging → int → marts in Redshift.
+- Great debugging instincts: You spotted schema-name doubling, DATEDIFF signature differences, and source naming mismatches; you verified with minimal repros.
+- Security-aware: You moved creds to Secrets Manager, used env vars, and fixed grants instead of hacking around them.
+- Change hygiene: You grouped commits logically, archived legacy macros, and used feature branch → PR → merge.
+- Portability mindset: You chose macros + a staging “contract” over forking model trees. That’s senior DE thinking.
+
+Growth areas (no BS)
+- Context switching: When the coffee hit, you bounced between steps, costing cycles.
+- Naming/typos create drag: e.g., int_nyc__trip_xone, .gitinore, and dev_viper_dev_viper_stg. Small slips, real time sink.
+- Privilege model clarity: It took a few hops to land on “DB-level CREATE is required for create schema if not exists.”
+- Version alignment: dbt-core 1.10.x with redshift adapter 1.9.x is workable but risky. Lock versions early.
+- YAML/Jinja sharp edges: A stray semicolon in YAML or a Python-style list comp in Jinja = hard stop.
+
+Concrete improvements (next 2 weeks)
+Working habits
+- 45‑min sprints with exit criteria: Start each sprint with “Done when: X passes (dbt build for tag:staging), Y committed.”
+- Friction log: Keep a running list of snags (perms, macro duplicates). Close the loop at day’s end.
+- Guardrails for focus: One terminal pane per stage (setup / dbt / git). Keep a tiny NEXT.md with exactly 3 bullets.
+
+Project management
+- Definition of Done per WBS: Each step has a verifiable check (explicit command + expected output).
+- PR template: Include “What changed”, “How tested”, “Roll-forward/back”, “Docs link”. Reviewers move faster.
+- Automate repetitive checks: Pre-commit hooks for YAML lint, dbt ls sanity, and grep for Snowflake-isms.
+
+Technical
+- Lock versions in requirements.txt:
+  dbt-core==1.10.6
+  dbt-redshift==1.9.5
+  dbt-snowflake==1.10.0   (or align to a supported matrix)
+- Tests where they matter: Enrich staging schema.yml with accepted_values (cab_type), ranges (trip_distance >= 0), relationships (zone IDs).
+- Dispatch pattern for portability: You used minutes_between; extend with decimal_cast(), ilike(), safe_divide() if needed.
+- Materialization strategy: In prod, consider int_nyc__trip_zone as table with sort key on pickup_month; keep dev as view.
+- Permissions by role: Move from user grants to groups (rs_transformer_dev, rs_reader_prod) to avoid per-user drift.
+
+Technical lessons learned (you can brag about)
+- Staging is the adapter layer: Normalize raw → canonical names/types; downstream stays warehouse-agnostic.
+- Macros beat model forks: One logical model, small adapter shims (minutes_between) and schema-per-layer macro to route DEV/PROD.
+- Redshift vs Snowflake nits: datediff(minute, a, b) vs datediff('minute', a, b); extract(hour from ts) over hour(ts); coalesce over nvl.
+- Grants hierarchy matters: DB-level CREATE is required even with create schema if not exists. Schema USAGE, CREATE + table SELECT complete the picture.
+- Docs/exposures sell the story: Lineage from public.* → staging → int → marts → dashboard is recruiter bait.
+
+Checklists you can reuse
+Pre‑build
+[ ] source env.redshift.dev.sh (host/user/db/password set)
+[ ] dbt debug -t redshift_dev → OK
+[ ] dbt parse → OK (no duplicate macros)
+
+Build path
+[ ] dbt build -s tag:staging
+[ ] dbt build -s int_nyc__trip_zone
+[ ] dbt build -s marts.nyc_taxi_dashboard
+
+Docs & share
+[ ] dbt docs generate && dbt docs serve
+[ ] Exposure node added; screenshot lineage with “Only show selection”
+
+PR hygiene
+[ ] Small commits by layer (macros / staging / int / marts)
+[ ] PR body: changes, tests, docs link, risk, rollback plan
+
+Next‑phase roadmap (bite‑sized)
+1) Add CI (GitHub Actions): run dbt build -t redshift_dev -s state:modified+ on PRs; publish dbt docs as Pages.
+2) QA parity check: 1‑week window compare RS vs SF counts + key metrics; capture deltas.
+3) Prod rollout: create prod_viper_* schemas, grants, and build int_nyc__trip_zone+ marts on redshift_prod.
+4) Performance pass: measure hot marts; consider materializing int/heavy marts as table with sort keys; add analyze/vacuum cadence.
+5) Data contracts: strengthen staging tests; add alerts for freshness on raw sources.
+
+Final coach note
+You did the hard parts: creds, grants, cross‑DB quirks, and a clean, portable DAG. Tighten focus rituals and naming discipline, and you’ll move from “working project” to “polished platform” fast. I’m here for the next leg—CI, prod cutover, and a docs page that’ll pop on LinkedIn.
