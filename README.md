@@ -1,13 +1,13 @@
 # 🌆 ZenClarity-UrbanFlow — NYC Taxi Data Engineering Project
 
-**ZenClarity-UrbanFlow reflects my approach to data engineering: clarity, scalability, and modern cloud practices.**  
-Built with AWS, dbt, Redshift, and Snowflake, it showcases both batch and streaming pipelines, automated orchestration, and a real-time analytics dashboard.
+**A modern, cloud-native data engineering platform that ingests NYC Taxi data via streaming and batch pipelines, transforms it with dbt, and delivers analytics in Redshift, Snowflake, and Streamlit.**  
+ZenClarity-UrbanFlow demonstrates best practices in clarity, scalability, and modern cloud data engineering. It highlights near real-time ingestion, reproducible transformations, and cross-engine benchmarking to evaluate performance and cost-efficiency across **data warehouse engines**.
 
-- 🚖 **Pipelines**: Real-time streaming (Kinesis) + batch ingestion (Glue)  
-- 📦 **Warehousing**: Redshift Serverless & Snowflake  
-- 📊 **Modeling**: dbt (staging → intermediate → marts)  
-- ⚡ **Benchmarks**: Redshift vs Snowflake performance  
-- 📈 **Visualization**: Streamlit dashboard (screenshots included)  
+- 🚖 **Pipelines**: Real-time streaming via Kinesis + scheduled batch ingestion with AWS Glue  
+- 🗄️ **Data Warehousing Engines**: Redshift Serverless and Snowflake, supporting analytics and benchmarking  
+- 📊 **Modeling**: dbt with layered structure (staging → intermediate → marts)  
+- ⚡ **Benchmarks**: Comparative performance tests across Redshift and Snowflake  
+- 📈 **Visualization**: Streamlit dashboard delivering KPIs and real-time vs. baseline insights  
 
 ---
 
@@ -37,10 +37,10 @@ Built with AWS, dbt, Redshift, and Snowflake, it showcases both batch and stream
 ## 📂 Repo Structure 
 
 ZenClarity-UrbanFlow/  
-├── analytics/          # notebooks + Streamlit app (screenshots archived)  
+├── analytics/          # QuickSight & Streamlit app (screenshots archived)  
 ├── config/             # sample env/config snippets  
 ├── dbt/                # dbt models (staging → intermediate → marts)  
-├── docs/               # diagrams, metrics, planning notes  
+├── docs/               # diagrams, metrics, WBS planning notes  
 ├── infrastructure/     # EMR, Glue, Redshift, Snowflake configs  
 ├── scripts/            # ETL code (batch, streaming, emr_jobs, helpers)  
 └── venv/               # local virtualenv (ignored in git)  
@@ -49,12 +49,13 @@ ZenClarity-UrbanFlow/
 
 ## 📈 Data Models & dbt
 
-This project follows a **multi-layered dbt modeling pattern**:
+This project follows a **multi-layered dbt modeling pattern**, a best practice for building analytics code that is both maintainable and scalable. This approach ensures data quality, consistency, and reusability across the entire pipeline.
+
 - **Staging**: cleans raw data, enforces schema.  
 - **Intermediate**: joins + transformations for readability/efficiency.  
 - **Marts**: business-defined entities for analytics (facts & dims).  
 
-📑 **Documentation & lineage**:  
+📑 **Documentation & lineage**:  The entire dbt project is documented and includes a full lineage graph, showcasing the flow of data from source to dashboard
 [View dbt Project Documentation (S3 Hosted)](http://nle-dbt-docs.s3-website-us-east-1.amazonaws.com/#!/overview)
 
 ---
@@ -74,7 +75,7 @@ Results highlight performance trade-offs between Redshift and Snowflake under eq
 
 ## 📈 Dashboard KPIs (Streamlit)
 
-* Trip count  
+* Trips count  
 * Total fare revenue  
 * Average trip delay  
 * Passengers carried  
@@ -122,4 +123,3 @@ dbt • Snowflake • Python • Streamlit
 
 - LinkedIn: [le-nguyen-v](https://www.linkedin.com/in/le-nguyen-v/)  
 - GitHub: [tropily](https://github.com/tropily/Zen_Clarity)
-
