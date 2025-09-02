@@ -122,4 +122,4 @@ dbt • Snowflake • Python • Streamlit
 ## 🔗 Connect
 
 - LinkedIn: [le-nguyen-v](https://www.linkedin.com/in/le-nguyen-v/)  
-- GitHub: [tropily](https://github.com/tropily/Zen_Clarity)
+- GitHub: [tropily](https://github.com/tropily/ZenClarity-UrbanFlow)

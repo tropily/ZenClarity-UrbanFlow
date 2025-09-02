@@ -49,6 +49,7 @@ config/*.sh
 
 # Draft diagram notes
 /docs/arch_diagrams/*.txt
+/docs/pm/
 # Lambda layer bundles (rebuild locally when needed)
 scripts/helpers/pipeline_logger_layer/*.zip
 .streamlit/
