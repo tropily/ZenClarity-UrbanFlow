@@ -3,16 +3,18 @@ version: 2
 sources:
   - name: nyc_taxi_db
     description: "Raw NYC Taxi datasets (historical + streaming)."
-    schema: batch_data
+    # Use target-specific database/schema mapping
+    database: "{% if target.type == 'spark' %}{% else %}nyc_taxi_db{% endif %}"
+    schema: "{% if target.type == 'spark' %}nyc_taxi_db{% else %}batch_data{% endif %}"
 
     tables:
       - name: trip_data
       - name: taxi_zone_lookup
 
-      # Streaming (lives in `public`)
-  - name: nyc_taxi_stream          # <-- new source for streaming
-    database: nyc_taxi_db
-    schema: public
+  # Streaming source
+  - name: nyc_taxi_stream
+    database: "{% if target.type == 'spark' %}{% else %}nyc_taxi_db{% endif %}"
+    schema: "{% if target.type == 'spark' %}nyc_taxi_db{% else %}public{% endif %}"
     tables:
       - name: taxi_streaming_trips
         identifier: taxi_streaming_trips
