@@ -1,5 +1,8 @@
 -- switch to 'table' later if needed{{ config(materialized='view') }}
 
+-- switch to 'table' later if needed
+{{ config(materialized='view') }}
+
 with trips as (
   select
     vendor_id,
@@ -27,11 +30,22 @@ select
   t.*,
   z.pickup_zone,
   z.pickup_borough,
-  CAST(t.pickup_at AS DATE)                              as pickup_date,
-  CAST(DATE_TRUNC('month', t.pickup_at) AS DATE)         as pickup_month,
-  TO_CHAR(DATE_TRUNC('month', t.pickup_at), 'YYYY-MM')   as pickup_month_ym,
-  EXTRACT(hour FROM t.pickup_at)                         as pickup_hour,
-  DATEDIFF('minute', t.pickup_at, t.dropoff_at)          as trip_duration_min
+
+  -- Date functions adapted for Spark SQL
+  {% if target.type == 'spark' %}
+    DATE(t.pickup_at) as pickup_date,
+    TRUNC(t.pickup_at, 'MM') as pickup_month,
+    DATE_FORMAT(TRUNC(t.pickup_at, 'MM'), 'yyyy-MM') as pickup_month_ym,
+    HOUR(t.pickup_at) as pickup_hour,
+    CAST((UNIX_TIMESTAMP(t.dropoff_at) - UNIX_TIMESTAMP(t.pickup_at)) / 60 AS INT) as trip_duration_min
+  {% else %}
+    CAST(t.pickup_at AS DATE) as pickup_date,
+    CAST(DATE_TRUNC('month', t.pickup_at) AS DATE) as pickup_month,
+    TO_CHAR(DATE_TRUNC('month', t.pickup_at), 'YYYY-MM') as pickup_month_ym,
+    EXTRACT(hour FROM t.pickup_at) as pickup_hour,
+    DATEDIFF('minute', t.pickup_at, t.dropoff_at) as trip_duration_min
+  {% endif %}
+
 from trips t
 left join zones z
   on t.pickup_location_id = z.location_id

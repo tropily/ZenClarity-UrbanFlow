@@ -21,7 +21,13 @@ ranked_month as (
   from zone_counts_month
 )
 
-select 'overall' as grain, null::date as pickup_month, pickup_zone, total_trips, rnk
+select 'overall' as grain,
+       {% if target.type == 'spark' %}
+         CAST(NULL AS DATE) as pickup_month,
+       {% else %}
+         null::date as pickup_month,
+       {% endif %}
+       pickup_zone, total_trips, rnk
 from ranked_overall
 where rnk = 1
 
