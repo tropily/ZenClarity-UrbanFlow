@@ -2,8 +2,9 @@
 # Python / Environment
 # ------------------------------
 venv/
+.venv/
 .env
-.venv
+.env.*
 __pycache__/
 *.pyc
 *.pyo
@@ -11,6 +12,7 @@ __pycache__/
 *.egg-info/
 build/
 dist/
+.python-version
 
 # ------------------------------
 # dbt Generated
@@ -18,6 +20,10 @@ dist/
 dbt/target/
 dbt/logs/
 dbt/.user.yml
+dbt/dbt_packages/
+dbt/json/
+# In case the dbt project root differs
+dbt_packages/
 
 # ------------------------------
 # OS / Editor
@@ -27,6 +33,10 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+*.swo
+*.bak
+*.tmp
+*.code-workspace
 
 # ------------------------------
 # Jupyter / Notebooks
@@ -37,19 +47,25 @@ Thumbs.db
 # ------------------------------
 # Local env / secrets (do not commit)
 # ------------------------------
-config/*.sh
 .dbt/
-.streamlit/secrets.toml
+.streamlit/
+config/*.sh
+*.pem
+*.crt
+*.key
 
 # ------------------------------
-# Misc
+# Logs / Misc
 # ------------------------------
 *.log
-*.tmp
 
-# Draft diagram notes
+# ------------------------------
+# Docs / Draft notes (keep published images)
+# ------------------------------
 /docs/arch_diagrams/*.txt
 /docs/pm/
-# Lambda layer bundles (rebuild locally when needed)
+
+# ------------------------------
+# Lambda layer bundles (rebuild locally)
+# ------------------------------
 scripts/helpers/pipeline_logger_layer/*.zip
-.streamlit/
