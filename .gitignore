@@ -69,3 +69,4 @@ config/*.sh
 # Lambda layer bundles (rebuild locally)
 # ------------------------------
 scripts/helpers/pipeline_logger_layer/*.zip
+infrastructure/emr_cluster/firehose_config.json
