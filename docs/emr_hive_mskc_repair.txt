@@ -1,0 +1,33 @@
+/usr/bin/hive
+Partitions not in metastore:	emr_trip_data:cab_type=yellow/year=2024/month=1/day=1	emr_trip_data:cab_type=yellow/year=2024/month=1/day=10	emr_trip_data:cab_type=yellow/year=2024/month=1/day=11	emr_trip_data:cab_type=yellow/year=2024/month=1/day=12	emr_trip_data:cab_type=yellow/year=2024/month=1/day=13	emr_trip_data:cab_type=yellow/year=2024/month=1/day=14	emr_trip_data:cab_type=yellow/year=2024/month=1/day=15	emr_trip_data:cab_type=yellow/year=2024/month=1/day=16	emr_trip_data:cab_type=yellow/year=2024/month=1/day=17	emr_trip_data:cab_type=yellow/year=2024/month=1/day=18	emr_trip_data:cab_type=yellow/year=2024/month=1/day=19	emr_trip_data:cab_type=yellow/year=2024/month=1/day=2	emr_trip_data:cab_type=yellow/year=2024/month=1/day=20	emr_trip_data:cab_type=yellow/year=2024/month=1/day=21	emr_trip_data:cab_type=yellow/year=2024/month=1/day=22	emr_trip_data:cab_type=yellow/year=2024/month=1/day=23	emr_trip_data:cab_type=yellow/year=2024/month=1/day=24	emr_trip_data:cab_type=yellow/year=2024/month=1/day=25	emr_trip_data:cab_type=yellow/year=2024/month=1/day=26	emr_trip_data:cab_type=yellow/year=2024/month=1/day=27	emr_trip_data:cab_type=yellow/year=2024/month=1/day=28	emr_trip_data:cab_type=yellow/year=2024/month=1/day=29	emr_trip_data:cab_type=yellow/year=2024/month=1/day=3	emr_trip_data:cab_type=yellow/year=2024/month=1/day=30	emr_trip_data:cab_type=yellow/year=2024/month=1/day=31	emr_trip_data:cab_type=yellow/year=2024/month=1/day=4	emr_trip_data:cab_type=yellow/year=2024/month=1/day=5	emr_trip_data:cab_type=yellow/year=2024/month=1/day=6	emr_trip_data:cab_type=yellow/year=2024/month=1/day=7	emr_trip_data:cab_type=yellow/year=2024/month=1/day=8	emr_trip_data:cab_type=yellow/year=2024/month=1/day=9
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=30
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=28
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=15
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=14
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=29
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=2
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=13
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=17
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=10
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=8
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=23
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=27
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=11
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=1
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=24
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=12
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=6
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=22
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=4
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=21
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=7
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=16
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=9
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=3
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=20
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=26
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=5
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=19
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=25
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=18
+Repair: Added partition to metastore emr_trip_data:cab_type=yellow/year=2024/month=1/day=31

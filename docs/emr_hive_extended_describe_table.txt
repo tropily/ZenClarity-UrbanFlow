@@ -1,0 +1,35 @@
+/usr/bin/hive
+vendorid            	int
+pickup_datetime     	timestamp
+dropoff_datetime    	timestamp
+store_and_fwd_flag  	string
+ratecodeid          	bigint
+pulocationid        	int
+dolocationid        	int
+passenger_count     	bigint
+trip_distance       	double
+fare_amount         	double
+extra               	double
+mta_tax             	double
+tip_amount          	double
+tolls_amount        	double
+ehail_fee           	double
+improvement_surcharge	double
+total_amount        	double
+payment_type        	bigint
+trip_type           	bigint
+congestion_surcharge	double
+airport_fee         	double
+cab_type            	string
+year                	int
+month               	int
+day                 	int
+
+# Partition Information
+# col_name            	data_type           	comment
+cab_type            	string
+year                	int
+month               	int
+day                 	int
+
+Detailed Table Information	Table(tableName:emr_trip_data, dbName:nyc_taxi_db, owner:null, createTime:1758846355, lastAccessTime:0, retention:0, sd:StorageDescriptor(cols:[FieldSchema(name:vendorid, type:int, comment:null), FieldSchema(name:pickup_datetime, type:timestamp, comment:null), FieldSchema(name:dropoff_datetime, type:timestamp, comment:null), FieldSchema(name:store_and_fwd_flag, type:string, comment:null), FieldSchema(name:ratecodeid, type:bigint, comment:null), FieldSchema(name:pulocationid, type:int, comment:null), FieldSchema(name:dolocationid, type:int, comment:null), FieldSchema(name:passenger_count, type:bigint, comment:null), FieldSchema(name:trip_distance, type:double, comment:null), FieldSchema(name:fare_amount, type:double, comment:null), FieldSchema(name:extra, type:double, comment:null), FieldSchema(name:mta_tax, type:double, comment:null), FieldSchema(name:tip_amount, type:double, comment:null), FieldSchema(name:tolls_amount, type:double, comment:null), FieldSchema(name:ehail_fee, type:double, comment:null), FieldSchema(name:improvement_surcharge, type:double, comment:null), FieldSchema(name:total_amount, type:double, comment:null), FieldSchema(name:payment_type, type:bigint, comment:null), FieldSchema(name:trip_type, type:bigint, comment:null), FieldSchema(name:congestion_surcharge, type:double, comment:null), FieldSchema(name:airport_fee, type:double, comment:null), FieldSchema(name:cab_type, type:string, comment:null), FieldSchema(name:year, type:int, comment:null), FieldSchema(name:month, type:int, comment:null), FieldSchema(name:day, type:int, comment:null)], location:s3://teo-nyc-taxi/processed/emr/trip_data/, inputFormat:org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat, outputFormat:org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat, compressed:false, numBuckets:0, serdeInfo:SerDeInfo(name:null, serializationLib:org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe, parameters:{serialization.format=1}), bucketCols:[], sortCols:[], parameters:{}, storedAsSubDirectories:false), partitionKeys:[FieldSchema(name:cab_type, type:string, comment:null), FieldSchema(name:year, type:int, comment:null), FieldSchema(name:month, type:int, comment:null), FieldSchema(name:day, type:int, comment:null)], parameters:{totalSize=0, numRows=0, rawDataSize=0, aws.spark.fgac.transient.isRegisteredWithLakeFormation=false, numFiles=0, numPartitions=31, classification=parquet}, viewOriginalText:null, viewExpandedText:null, tableType:EXTERNAL_TABLE, catName:hive, ownerType:USER)

@@ -1,0 +1,52 @@
+[
+  {
+    "Name": "Base_Yellow_2024_01",
+    "ActionOnFailure": "CONTINUE",
+    "HadoopJarStep": {
+      "Jar": "command-runner.jar",
+      "Args": [
+        "spark-submit","--deploy-mode","cluster",
+        "s3://teo-nyc-taxi/scripts/emr-jobs/emr_process_trip_data.py",
+        "--cab_type","yellow","--year","2024","--month","1",
+        "--raw_prefix","s3://teo-nyc-taxi/raw/",
+        "--dest_prefix","s3://teo-nyc-taxi/processed/emr/trip_data/"
+      ]
+    }
+  },
+  {
+    "Name": "Base_Green_2024_01",
+    "ActionOnFailure": "CONTINUE",
+    "HadoopJarStep": {
+      "Jar": "command-runner.jar",
+      "Args": [
+        "spark-submit","--deploy-mode","cluster",
+        "s3://teo-nyc-taxi/scripts/emr-jobs/emr_process_trip_data.py",
+        "--cab_type","green","--year","2024","--month","1",
+        "--raw_prefix","s3://teo-nyc-taxi/raw/",
+        "--dest_prefix","s3://teo-nyc-taxi/processed/emr/trip_data/"
+      ]
+    }
+  },
+  {
+    "Name": "Base_FHV_2024_01",
+    "ActionOnFailure": "CONTINUE",
+    "HadoopJarStep": {
+      "Jar": "command-runner.jar",
+      "Args": [
+        "spark-submit","--deploy-mode","cluster",
+        "s3://teo-nyc-taxi/scripts/emr-jobs/emr_process_trip_data.py",
+        "--cab_type","fhv","--year","2024","--month","1",
+        "--raw_prefix","s3://teo-nyc-taxi/raw/",
+        "--dest_prefix","s3://teo-nyc-taxi/processed/emr/trip_data/"
+      ]
+    }
+  },
+  {
+    "Name": "Hive_Placeholder",
+    "ActionOnFailure": "CONTINUE",
+    "HadoopJarStep": {
+      "Jar": "command-runner.jar",
+      "Args": ["hive","-e","SELECT 1;"]
+    }
+  }
+]

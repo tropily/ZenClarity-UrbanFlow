@@ -1,0 +1,14 @@
+aws emr create-cluster \
+    --name "dbt_emr_nyc_taxi_trips" \
+    --log-uri "s3://<YOUR_LOGS_S3_BUCKET>/logs" \
+    --release-label "emr-7.7.0" \
+    --service-role "arn:aws:iam::<AWS_ACCOUNT_ID>:role/Teo_EMR_DefaultRole" \
+    --unhealthy-node-replacement \
+    --ec2-attributes '{"InstanceProfile":"<EC2_INSTANCE_PROFILE_NAME>","EmrManagedMasterSecurityGroup":"<MASTER_SG_ID>","EmrManagedSlaveSecurityGroup":"<SLAVE_SG_ID>","KeyName":"<EC2_KEY_PAIR_NAME>","SubnetIds":["<SUBNET_ID>"]}' \
+    --applications Name=Hadoop Name=Hive Name=Livy Name=Spark \
+    --configurations '[{"Classification":"hive-site","Properties":{"hive.metastore.client.factory.class":"com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory"}},{"Classification":"spark-hive-site","Properties":{"hive.metastore.client.factory.class":"com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory"}}]' \
+    --instance-groups '[{"InstanceCount":1,"InstanceGroupType":"MASTER","Name":"Primary","InstanceType":"m5.xlarge","EbsConfiguration":{"EbsBlockDeviceConfigs":[{"VolumeSpecification":{"VolumeType":"gp2","SizeInGB":32},"VolumesPerInstance":2}]}},{"InstanceCount":1,"InstanceGroupType":"TASK","Name":"Task - 1","InstanceType":"m5.xlarge","EbsConfiguration":{"EbsBlockDeviceConfigs":[{"VolumeSpecification":{"VolumeType":"gp2","SizeInGB":32},"VolumesPerInstance":2}]}},{"InstanceCount":1,"InstanceGroupType":"CORE","Name":"Core","InstanceType":"m5.xlarge","EbsConfiguration":{"EbsBlockDeviceConfigs":[{"VolumeSpecification":{"VolumeType":"gp2","SizeInGB":32},"VolumesPerInstance":2}]}}]' \
+    --bootstrap-actions '[{"Args":[],"Name":"Install boto3","Path":"s3://<YOUR_SCRIPTS_S3_BUCKET>/scripts/install-boto3.sh"}]' \
+    --steps '[{"Name":"StartDbtThriftServer","ActionOnFailure":"CANCEL_AND_WAIT","Jar":"command-runner.jar","Properties":"=","Args":["bash","-c","sudo /usr/lib/spark/sbin/start-thriftserver.sh"],"Type":"CUSTOM_JAR"}]' \
+    --scale-down-behavior "TERMINATE_AT_TASK_COMPLETION" \
+    --region "us-east-1"
