@@ -61,17 +61,32 @@ Designed for **portability, cost-performance benchmarking, and real-time insight
 
 ## 📂 Repo Structure
 
+## Repo Structure
+
+```text
 ZenClarity-UrbanFlow/
-├── analytics/ # QuickSight & Streamlit app (screenshots archived)
-├── config/ # sample env/config snippets
-├── dbt/ # dbt models (staging → intermediate → marts)
-├── docs/ # diagrams, metrics, WBS planning notes
-├── infrastructure/ # EMR, Glue, Redshift, Snowflake configs
-├── scripts/
-│ ├── batch/ # Glue jobs + EMR Spark jobs
-│ ├── streaming/ # Simulator + Kinesis delivery
-│ └── helpers/ # Shared utilities
-└── venv/ # local virtualenv (ignored in git)
+├─ analytics/                  # QuickSight & Streamlit app
+├─ config/                     # sample env/config snippets (no secrets)
+├─ dbt/                        # dbt models (staging → intermediate → marts)
+├─ docs/                       # diagrams, metrics, notes
+│  ├─ arch_diagrams/
+│  ├─ benchmarks/
+│  └─ emr_hive/                # Hive notes
+├─ infrastructure/             # EMR, Glue, Redshift, Snowflake, Kinesis, Step Functions
+│  ├─ emr/
+│  ├─ glue/
+│  ├─ redshift/
+│  ├─ snowflake/
+│  ├─ kinesis/
+│  └─ stepfunctions/
+├─ scripts/
+│  ├─ batch/                   # Glue jobs + EMR Spark jobs
+│  │  ├─ glue_jobs/
+│  │  └─ emr_spark/
+│  ├─ streaming/               # Simulator + Kinesis delivery
+│  └─ helpers/                 # Shared utilities
+└─ venv/                       # (ignored)
+
 
 ---
 
