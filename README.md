@@ -61,7 +61,6 @@ Designed for **portability, cost-performance benchmarking, and real-time insight
 
 ## 📂 Repo Structure
 
-## Repo Structure
 
 ```text
 ZenClarity-UrbanFlow/
@@ -86,7 +85,6 @@ ZenClarity-UrbanFlow/
 │  ├─ streaming/               # Simulator + Kinesis delivery
 │  └─ helpers/                 # Shared utilities
 └─ venv/                       # (ignored)
-
 
 ---
 
