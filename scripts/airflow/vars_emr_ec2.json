@@ -1,0 +1,11 @@
+{
+  "ZCU_EC2_CLUSTER_ID": "j-3R6X7845LWB8Z",
+  "ZCU_SCRIPT_S3": "s3://teo-nyc-taxi/scripts/emr-jobs/emr_process_trip_data.py",
+  "ZCU_CAB_TYPE": "yellow",
+  "ZCU_YEAR": "2025",
+  "ZCU_MONTH": "01",
+  "ZCU_RAW_PREFIX": "s3://teo-nyc-taxi/raw/",
+  "ZCU_DEST_PREFIX": "s3://teo-nyc-taxi/processed/emr/trip_data/",
+  "ZCU_SPARK_OPTS": "--deploy-mode cluster --conf spark.executor.instances=2 --conf spark.executor.memory=2g --conf spark.executor.cores=1",
+  "ZCU_REGION": "us-east-1"
+}
