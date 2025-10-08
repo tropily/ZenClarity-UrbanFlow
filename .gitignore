@@ -116,3 +116,4 @@ tools/airflow-docker/plugins/
 
 # Personal runbooks
 docs/runbooks/*.md
+firehose_config.json
