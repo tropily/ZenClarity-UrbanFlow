@@ -53,7 +53,16 @@ Designed for **portability, cost-performance benchmarking, and real-time insight
   - **EMR Spark** via **Spark Thrift Server (STS)** with **Hive Metastore (Glue Catalog)** for schema management.
   This ensures portability, consistency, and reduced maintenance overhead
 
-- **Orchestration**: **AWS Step Functions** automate and manage pipeline workflows
+## Orchestration
+
+- **AWS Step Functions** — production path that orchestrates **Glue** jobs to ingest from source and load into **Amazon Redshift**.
+
+- **Apache Airflow (Docker, local)** — parallel/alternative path that triggers **EMR Spark** batch runs for heavier or custom Spark workloads.
+  - DAG: `emr_ec2_submit_step` submits a `spark-submit` step to an existing EMR (EC2) cluster and waits for completion.
+  - Config: AWS creds from host `~/.aws` (mounted read-only), defaults via Airflow **Variables**, run-time overrides via `dag_run.conf` (e.g. `{"year":"2024","month":"10","cab_type":"yellow"}`).
+
+**Why both?** Step Functions powers the Glue-based production pipeline; Airflow demonstrates portability and scale-up options using EMR Spark, and serves as a developer-friendly orchestrator for iterative jobs.
+flows
 
 - **Visualization**: **Streamlit** surfaces KPIs and real-time vs baseline comparisons
 
@@ -61,30 +70,40 @@ Designed for **portability, cost-performance benchmarking, and real-time insight
 
 ## 📂 Repo Structure
 
-
 ```text
 ZenClarity-UrbanFlow/
-├─ analytics/                  # QuickSight & Streamlit app
-├─ config/                     # sample env/config snippets (no secrets)
-├─ dbt/                        # dbt models (staging → intermediate → marts)
-├─ docs/                       # diagrams, metrics, notes
+├─ analytics/
+├─ config/
+├─ dbt/
+├─ docs/
 │  ├─ arch_diagrams/
 │  ├─ benchmarks/
-│  └─ emr_hive/                # Hive notes
-├─ infrastructure/             # EMR, Glue, Redshift, Snowflake, Kinesis, Step Functions
-│  ├─ emr/
+│  ├─ metrics/
+│  └─ runbooks/                 # gitignored
+├─ infrastructure/
+│  ├─ emr/                      
 │  ├─ glue/
 │  ├─ redshift/
-│  ├─ snowflake/
-│  ├─ kinesis/
-│  └─ stepfunctions/
+│  └─ snowflake/
 ├─ scripts/
-│  ├─ batch/                   # Glue jobs + EMR Spark jobs
+│  ├─ airflow/
+│  │  ├─ emr_ec2_submit_step.py
+│  │  └─ vars_emr_ec2.json
+│  ├─ airflow_disabled/         # (ignored)
+│  ├─ batch/
 │  │  ├─ glue_jobs/
 │  │  └─ emr_spark/
-│  ├─ streaming/               # Simulator + Kinesis delivery
-│  └─ helpers/                 # Shared utilities
-└─ venv/                       # (ignored)
+│  ├─ emr_jobs/
+│  │  └─ emr_process_trip_data.py
+│  ├─ streaming/
+│  └─ helpers/
+├─ tools/
+│  └─ airflow-docker/
+│     ├─ docker-compose.yml
+│     ├─ Dockerfile
+│     ├─ logs/                  # ignored
+│     └─ plugins/               # ignored
+└─ README.md
 
 ---
 

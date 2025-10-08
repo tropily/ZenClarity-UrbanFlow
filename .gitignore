@@ -70,3 +70,49 @@ config/*.sh
 # ------------------------------
 scripts/helpers/pipeline_logger_layer/*.zip
 infrastructure/emr_cluster/firehose_config.json
+docs/runbooks/airflow_manual_runbook.md
+# Airflow (Docker)
+tools/airflow-docker/.env
+tools/airflow-docker/logs/
+tools/airflow-docker/plugins/
+
+# Local runbooks / notes
+docs/runbooks/*.md
+
+# Python venvs
+venv/
+# Python env & caches
+venv/
+**/__pycache__/
+
+# dbt build artifacts
+dbt/target/
+dbt/logs/
+logs/
+
+# Airflow (Docker)
+tools/airflow-docker/.env
+tools/airflow-docker/logs/
+tools/airflow-docker/plugins/
+
+# Personal runbooks/notes
+docs/runbooks/*.md
+
+# Local Airflow disabled DAGs (optional)
+scripts/airflow_disabled/
+# Python env & caches
+venv/
+**/__pycache__/
+
+# dbt build artifacts
+dbt/target/
+dbt/logs/
+logs/
+
+# Airflow (Docker)
+tools/airflow-docker/.env
+tools/airflow-docker/logs/
+tools/airflow-docker/plugins/
+
+# Personal runbooks
+docs/runbooks/*.md
