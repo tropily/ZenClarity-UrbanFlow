@@ -1,7 +1,6 @@
 # 🌆 ZenClarity-UrbanFlow — NYC Taxi Data Engineering Project
 
-**A modern data engineering platform combining streaming + batch pipelines, dbt-powered transformations, and multi-engine analytics across Redshift Serverless, Snowflake, and EMR Spark**
-Designed for **portability, cost-performance benchmarking, and real-time insights** delivered via Streamlit
+**A modern data engineering platform combining streaming + batch pipelines, dbt-powered transformations, and multi-engine analytics across Redshift Serverless, Snowflake, and EMR Spark** Designed for **portability, scalability, cost-performance benchmarking, and real-time insights** delivered via Streamlit
 
 - 🚖 **Pipelines**: Streaming (Kinesis) + Batch (Glue, EMR Spark)
 - 🗄️ **Data Lake & Warehouses**: S3 + Redshift, Snowflake, Spark SQL
@@ -151,18 +150,22 @@ dbt • Snowflake • Python • Streamlit
   - Extend docs with tuning experiments (partitioning, compaction, Spark optimizations)
 
 - **Future Enhancements**
+  - **Adaptive Orchestration (Glue ↔ EMR Spark)**
+    - Implement **size-aware routing** that automatically selects **Glue** for small payloads and **EMR Spark** for large (> 50 MB) datasets  
+    - Integrate **stateful dependency tracking via DynamoDB** for idempotent, ordered execution  
+    - Expose orchestration metrics in **Streamlit dashboard** for transparency and scalability benchmarking  
   - **AI-Powered Natural Language → SQL Assistant (AWS-native)**
-    - Explore **Amazon Bedrock** for NL→SQL translation, grounded in dbt metadata + Glue Catalog
-    - Use **Knowledge Bases** + **OpenSearch Serverless** for semantic context retrieval.
-  - Iceberg tables / Athena for streaming cost optimization
-  - Predictive analytics (surge demand zones)
-  - More realistic simulation from historical patterns
+    - Explore **Amazon Bedrock** for NL → SQL translation, grounded in **dbt metadata** + **Glue Catalog**  
+    - Use **Knowledge Bases** + **OpenSearch Serverless** for semantic context retrieval  
+  - **Iceberg tables / Athena** for streaming cost optimization  
+  - **Predictive analytics** (surge demand zones)  
+  - **More realistic simulation** from historical patterns
 
 ---
 
 ## 💡 Inspiration
 
-> *“ZenClarity-UrbanFlow embodies the idea that modern data engineering should empower everyone — from engineers to analysts — with scalable pipelines, portable models, and AI-driven access to insights.”*
+> *“ZenClarity-UrbanFlow embodies the idea that modern data engineering should empower everyone — from engineers to analysts — with scalable pipelines, portable models, and AI-driven access to insights with Clarity.”*
 
 ---
 
