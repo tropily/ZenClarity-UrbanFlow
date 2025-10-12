@@ -6,8 +6,9 @@
 - 🗄️ **Data Lake & Warehouses**: S3 + Redshift, Snowflake, Spark SQL
 - 📊 **dbt Modeling**: Staging → Intermediate → Marts
 - 🌐 **Portability**: One dbt codebase across Redshift, Snowflake, EMR Spark SQL
+- 🌐 **Scalability**: Adaptive routing — Glue for small payloads, EMR Spark for large-scale processing
 - 🧪 **Sanity Check**: Cross-engine runtime/cost notes in `/docs/benchmarks/`
-- 📈 **Visualization**: Streamlit dashboard with KPIs & real-time vs baseline
+- 📈 **Visualization**: Streamlit dashboard with KPIs & real-time vs baseline comparision
 
 ---
 
