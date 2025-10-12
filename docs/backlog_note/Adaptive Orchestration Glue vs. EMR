@@ -1,0 +1,11 @@
+Backlog Note — Adaptive Orchestration (Future Enhancement)
+
+Idea: Implement size-aware orchestration logic in Airflow to dynamically select Glue or EMR Spark based on input file size.
+Goal: Demonstrate scalable, dependency-aware automation and highlight decision-driven orchestration.
+Next Steps (future sprint):
+
+Add S3 size check + BranchPythonOperator (threshold = 50 MB).
+
+Record run state and engine in DynamoDB for idempotency.
+
+Update README under “Roadmap → Orchestration Enhancements.”
