@@ -100,7 +100,7 @@ ZenClarity-UrbanFlow/
 │     ├─ logs/                  # ignored
 │     └─ plugins/               # ignored
 └─ README.md
-```text
+```
 ---
 
 ### 📈 Data Models & dbt
