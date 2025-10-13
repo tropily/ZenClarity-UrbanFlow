@@ -1,13 +1,13 @@
 ## 🌆 ZenClarity-UrbanFlow — NYC Taxi Data Engineering Project
-> **A modern data engineering platform** combining streaming + batch pipelines, dbt-powered transformations, and multi-engine analytics across **Redshift Serverless**, **Snowflake**, and **EMR Spark.**  
+> **A modern data engineering platform** combining streaming + batch pipelines, dbt-powered transformations, and multi-engine analytics across **Redshift Serverless**, **Snowflake**, and **EMR Spark.**
 > Designed for **portability**, **scalability**, **cost-performance benchmarking**, and **real-time insights** delivered via Streamlit.
 
-- 🚖 **Pipelines**: Streaming (Kinesis) + Batch (Glue, EMR Spark)  
-- 🗄️ **Data Lake & Warehouses**: S3 + Redshift, Snowflake, Spark SQL  
-- 📊 **dbt Modeling**: Staging → Intermediate → Marts  
-- 🌐 **Portability**: One dbt codebase across Redshift, Snowflake, EMR Spark SQL  
-- ⚙️ **Scalability**: Adaptive routing — Glue for small payloads, EMR Spark for large-scale processing  
-- 🧪 **Sanity Check**: Cross-engine runtime/cost notes in `/docs/benchmarks/`  
+- 🚖 **Pipelines**: Streaming (Kinesis) + Batch (Glue, EMR Spark)
+- 🗄️ **Data Lake & Warehouses**: S3 + Redshift, Snowflake, Spark SQL
+- 📊 **dbt Modeling**: Staging → Intermediate → Marts
+- 🌐 **Portability**: One dbt codebase across Redshift, Snowflake, EMR Spark SQL
+- ⚙️ **Scalability**: Adaptive routing — Glue for small payloads, EMR Spark for large-scale processing
+- 🧪 **Sanity Check**: Cross-engine runtime/cost notes in `/docs/benchmarks/`
 - 📈 **Visualization**: Streamlit dashboard with KPIs & real-time vs baseline comparison
 
 ---
@@ -18,50 +18,50 @@
 ---
 
 ### 🌐 Portability — One dbt Codebase → Three Engines
-> **One dbt codebase** runs on **Snowflake**, **Redshift**, and **EMR Spark**, enabling true engine flexibility with no rewrites.  
+> **One dbt codebase** runs on **Snowflake**, **Redshift**, and **EMR Spark**, enabling true engine flexibility with no rewrites.
 > This design lets you benchmark cost/performance across platforms and keep models maintainable as a single source of truth.
 
 ![Portability Overview](docs/arch_diagrams/portability_overview.jpg)
 
 **Why it matters**
-- Avoids **vendor lock-in** and simplifies migrations  
-- Enables **apples-to-apples benchmarking** across engines  
-- Keeps analytics **consistent and DRY** with shared models/macros  
+- Avoids **vendor lock-in** and simplifies migrations
+- Enables **apples-to-apples benchmarking** across engines
+- Keeps analytics **consistent and DRY** with shared models/macros
 
 ---
 
 ### 📊 Project Highlights
 - **Data Ingestion**
-  - *Streaming*: Python simulator + **Kinesis Firehose** for near real-time ingestion  
+  - *Streaming*: Python simulator + **Kinesis Firehose** for near real-time ingestion
   - *Batch*:
-    - **AWS Glue** for serverless ETL  
-    - **EMR Spark** jobs (PySpark/Hive) for scalable, distributed batch processing  
+    - **AWS Glue** for serverless ETL
+    - **EMR Spark** jobs (PySpark/Hive) for scalable, distributed batch processing
 
-- **Data Lake & Storage**: Central **Amazon S3** data lake; **DynamoDB** for observability and audit logging  
+- **Data Lake & Storage**: Central **Amazon S3** data lake; **DynamoDB** for observability and audit logging
 
-- **Data Transformation**: ETL with **AWS Glue** and **EMR Spark**; ELT with **dbt** (multi-layer: staging, intermediate, marts)  
+- **Data Transformation**: ETL with **AWS Glue** and **EMR Spark**; ELT with **dbt** (multi-layer: staging, intermediate, marts)
 
 - **Data Warehousing Engines**
-  - **Redshift Serverless** for streaming & batch analytics  
-  - **Snowflake** for bulk loading + benchmarking  
-  - **EMR Spark SQL** for distributed queries and performance testing  
+  - **Redshift Serverless** for streaming & batch analytics
+  - **Snowflake** for bulk loading + benchmarking
+  - **EMR Spark SQL** for distributed queries and performance testing
 
 - **Unified Transformation Layer**: A single **dbt project** runs seamlessly across all engines:
-  - **Redshift** and **Snowflake** using native dbt adapters  
-  - **EMR Spark** via **Spark Thrift Server (STS)** with **Hive Metastore (Glue Catalog)** for schema management  
-  - Ensures portability, consistency, and reduced maintenance overhead  
+  - **Redshift** and **Snowflake** using native dbt adapters
+  - **EMR Spark** via **Spark Thrift Server (STS)** with **Hive Metastore (Glue Catalog)** for schema management
+  - Ensures portability, consistency, and reduced maintenance overhead
 
 ---
 
 ### ⚙️ Orchestration
-- **AWS Step Functions** — production path that orchestrates **Glue** jobs to ingest from source and load into **Amazon Redshift**.  
+- **AWS Step Functions** — production path that orchestrates **Glue** jobs to ingest from source and load into **Amazon Redshift**.
 - **Apache Airflow (Docker, local)** — alternative path that triggers **EMR Spark** batch runs for heavier or custom Spark workloads.
-  - DAG: `emr_ec2_submit_step` submits a `spark-submit` step to an existing EMR (EC2) cluster and waits for completion  
+  - DAG: `emr_ec2_submit_step` submits a `spark-submit` step to an existing EMR (EC2) cluster and waits for completion
   - Config: AWS creds from host `~/.aws` (mounted read-only), defaults via Airflow **Variables**, run-time overrides via `dag_run.conf` (e.g., `{"year":"2024","month":"10","cab_type":"yellow"}`)
 
 > **Why both?** Step Functions power the Glue-based production pipeline; Airflow demonstrates portability and scale-up options using EMR Spark, serving as a developer-friendly orchestrator for iterative jobs.
 
-- **Visualization**: **Streamlit** surfaces KPIs and real-time vs baseline comparisons  
+- **Visualization**: **Streamlit** surfaces KPIs and real-time vs baseline comparisons
 
 ---
 
@@ -77,7 +77,7 @@ ZenClarity-UrbanFlow/
 │  ├─ metrics/
 │  └─ runbooks/                 # gitignored
 ├─ infrastructure/
-│  ├─ emr/                      
+│  ├─ emr/
 │  ├─ glue/
 │  ├─ redshift/
 │  └─ snowflake/
@@ -106,35 +106,35 @@ ZenClarity-UrbanFlow/
 ### 📈 Data Models & dbt
 > This project follows a **multi-layered dbt modeling pattern** for maintainable, scalable analytics code.
 
-- **Staging**: cleans raw data, enforces schema  
-- **Intermediate**: joins + transformations for readability / efficiency  
+- **Staging**: cleans raw data, enforces schema
+- **Intermediate**: joins + transformations for readability / efficiency
 - **Marts**: business-defined entities for analytics (facts & dims)
 
-📑 **Documentation & Lineage:**  
-The entire dbt project is documented and includes a full lineage graph, showcasing the flow of data from source to dashboard.  
-[View dbt Project Documentation (S3 Hosted)](http://nle-dbt-docs.s3-website-us-east-1.amazonaws.com/#!/overview)
+📑 **Documentation & Lineage:**
+The entire dbt project is documented and includes a full lineage graph, showcasing the flow of data from source to dashboard.
+<http://nle-dbt-docs.s3-website-us-east-1.amazonaws.com/#!/overview>
 
 ---
 
 ### 📊 Dashboard KPIs (Streamlit)
-- Trips count  
-- Total fare revenue  
-- Average trip delay  
-- Passengers carried  
-- Trips per minute  
-- Real-time vs baseline comparison  
-- Cumulative trip chart  
+- Trips count
+- Total fare revenue
+- Average trip delay
+- Passengers carried
+- Trips per minute
+- Real-time vs baseline comparison
+- Cumulative trip chart
 
-**Screenshots:**  
-![Dashboard Screenshot](docs/metrics/streamlit_live_streaming_dashboard.jpg)
+**Screenshots:**
+![Dashboard Screenshot](https://github.com/<your_username>/<your_repo>/blob/main/docs/metrics/streamlit_live_streaming_dashboard.jpg?raw=true)
 
 ---
 
 ### 🌐 Technologies Used
-**AWS Services:**  
+**AWS Services:**
 S3 • Kinesis Firehose • Glue • Lambda • Step Functions • EventBridge • DynamoDB • Athena • Redshift Serverless • EMR (Spark, Hive, STS)
 
-**Other Tools:**  
+**Other Tools:**
 dbt • Snowflake • Python • Streamlit
 
 ---
@@ -145,15 +145,15 @@ dbt • Snowflake • Python • Streamlit
 
 - **Future Enhancements**
   - **Adaptive Orchestration (Glue ↔ EMR Spark)**
-    - Implement **size-aware routing** that automatically selects **Glue** for small payloads and **EMR Spark** for large (> 50 MB) datasets  
-    - Integrate **stateful dependency tracking via DynamoDB** for idempotent, ordered execution  
-    - Expose orchestration metrics in **Streamlit dashboard** for transparency and scalability benchmarking  
+    - Implement **size-aware routing** that automatically selects **Glue** for small payloads and **EMR Spark** for large (> 50 MB) datasets
+    - Integrate **stateful dependency tracking via DynamoDB** for idempotent, ordered execution
+    - Expose orchestration metrics in **Streamlit dashboard** for transparency and scalability benchmarking
   - **AI-Powered Natural Language → SQL Assistant (AWS-native)**
-    - Explore **Amazon Bedrock** for NL → SQL translation, grounded in **dbt metadata** + **Glue Catalog**  
-    - Use **Knowledge Bases** + **OpenSearch Serverless** for semantic context retrieval  
-  - **Iceberg tables / Athena** for streaming cost optimization  
-  - **Predictive analytics** (surge demand zones)  
-  - **More realistic simulation** from historical patterns  
+    - Explore **Amazon Bedrock** for NL → SQL translation, grounded in **dbt metadata** + **Glue Catalog**
+    - Use **Knowledge Bases** + **OpenSearch Serverless** for semantic context retrieval
+  - **Iceberg tables / Athena** for streaming cost optimization
+  - **Predictive analytics** (surge demand zones)
+  - **More realistic simulation** from historical patterns
 
 ---
 
@@ -163,5 +163,5 @@ dbt • Snowflake • Python • Streamlit
 ---
 
 ### 🔗 Connect
-- LinkedIn: [le-nguyen-v](https://www.linkedin.com/in/le-nguyen-v/)  
+- LinkedIn: [le-nguyen-v](https://www.linkedin.com/in/le-nguyen-v/)
 - GitHub: [tropily](https://github.com/tropily/ZenClarity-UrbanFlow)
