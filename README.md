@@ -112,8 +112,8 @@ ZenClarity-UrbanFlow/
 
 📑 **Documentation & Lineage:**
 The entire dbt project is documented and includes a full lineage graph, showcasing the flow of data from source to dashboard.
-[View dbt Project Documentation (S3 Hosted)](http://nle-dbt-docs.s3-website-us-east-1.amazonaws.com/#!/overview)
 
+[View dbt Project Documentation (S3 Hosted)](http://nle-dbt-docs.s3-website-us-east-1.amazonaws.com/#!/overview)
 
 ---
 
