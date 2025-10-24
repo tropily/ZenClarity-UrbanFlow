@@ -16,6 +16,11 @@ Example (EMR step):
     --cab_type yellow --year 2024 --month 1 \
     --raw_prefix s3://teo-nyc-taxi/raw/ \
     --dest_prefix s3://teo-nyc-taxi/processed/emr/trip_data/
+Version: 1 -
+    --Add AQE V1 optimizations
+    --Removing df.repartition(...)
+    --Add time for benchmarking
+    --Python Refactor def lower_cols()
 """
 
 import argparse
@@ -84,7 +89,7 @@ def main():
 
     # Write behavior to mirror Glue tuning
     spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
-    spark.conf.set("spark.sql.adaptive.enabled", "true") # Enable AQE - V2 enhancements
+    spark.conf.set("spark.sql.adaptive.enabled", "true") # Enable AQE - V1 enhancements
     spark.conf.set("spark.sql.parquet.compression.codec", "snappy")
     spark.conf.set("parquet.enable.dictionary", "false")
     spark.conf.set("parquet.writer.version", "v1")
@@ -131,7 +136,7 @@ def main():
     df.printSchema()
 
 # ... (Continuing inside the main() function) ...
-    
+
     # Write partitioned Parquet (append) to the TEST destination
     print(f"[INFO] Writing to {dest_path}")
     (df
