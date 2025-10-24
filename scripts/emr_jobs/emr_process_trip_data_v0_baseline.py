@@ -22,7 +22,6 @@ import argparse
 from pyspark.sql import SparkSession, functions as F, types as T
 import time
 
-
 def parse_args():
     ap = argparse.ArgumentParser()
     ap.add_argument("--cab_type", required=True, choices=["yellow", "green", "fhv"])
@@ -65,6 +64,8 @@ def add_missing_fhv_cols(df):
             df = df.withColumn(c, F.lit(None).cast(t))
     return df
 
+def lower_cols(df):
+    return df.toDF(*[c.lower() for c in df.columns])
 
 def main():
     args = parse_args()
@@ -74,8 +75,9 @@ def main():
     raw_path = f"{args.raw_prefix}{args.cab_type}_tripdata_{args.year}-{args.month:02d}.parquet"
     dest_path = args.dest_prefix.rstrip("/") + "/"
 
-# --- START TIMING BLOCK (S-1.2.6.8) ---
-    start_time = time.time()
+ # --- START TIMING BLOCK (S-1.2.6.9) ---
+    start_time = time.time()  #
+    
     spark = (
         SparkSession.builder
         .appName(f"emr_process_trip_data_{args.cab_type}_{args.year}_{args.month:02d}")
@@ -84,11 +86,9 @@ def main():
 
     # Write behavior to mirror Glue tuning
     spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
-    spark.conf.set("spark.sql.adaptive.enabled", "true") # Enable AQE - V2 enhancements
     spark.conf.set("spark.sql.parquet.compression.codec", "snappy")
     spark.conf.set("parquet.enable.dictionary", "false")
     spark.conf.set("parquet.writer.version", "v1")
-
 
     print(f"[INFO] Reading {raw_path}")
     df = spark.read.parquet(raw_path)
@@ -118,11 +118,8 @@ def main():
           .withColumn("day", F.dayofmonth(F.col("pickup_datetime")).cast(T.IntegerType()))
     )
 
-
-    # Lowercase columns (Optimized: uses Spark expressions, eliminates Python overhead on Driver) --V2 Enhancements
-    df = df.select(*[F.col(c).alias(c.lower()) for c in df.columns])
-
-# Drop metadata if present (CORRECTED LOOP SYNTAX)
+    # Lowercase columns & drop metadata if present
+    df = lower_cols(df)
     for m in ("_metadata", "_spark_metadata"):
         if m in df.columns:
             df = df.drop(m)
@@ -130,23 +127,21 @@ def main():
     print("[INFO] Normalized schema:")
     df.printSchema()
 
-# ... (Continuing inside the main() function) ...
-    
     # Write partitioned Parquet (append) to the TEST destination
     print(f"[INFO] Writing to {dest_path}")
-    (df
+    (df.repartition(args.coalesce, "cab_type", "year", "month", "day")
        .write
        .mode("append")
        .partitionBy("cab_type", "year", "month", "day")
        .parquet(dest_path))
 
-    # --- END TIMING BLOCK (S-1.2.6.8) ---
+# --- END TIMING BLOCK (S-1.2.6.9) ---
     end_time = time.time()
-    print(f"[BENCHMARK] Total Optimized Job Time: {end_time - start_time:.3f} seconds")
+    print(f"[BENCHMARK] Total Baseline Job Time: {end_time - start_time:.3f} seconds")
     # --- END TIMING BLOCK ---
 
     print("[DONE] Write complete.")
-    spark.stop()  # <-- Must be indented inside main()
+    spark.stop()
 
 if __name__ == "__main__":
     main()

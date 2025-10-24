@@ -26,7 +26,7 @@ zones as (
   from {{ ref('stg_nyc_taxi__taxi_zone_lookup') }}
 )
 
-select
+select /*+ BROADCAST(z) */
   t.*,
   z.pickup_zone,
   z.pickup_borough,
