@@ -2,11 +2,6 @@
 """
 EMR PySpark job — process trip data (base stage, no zone joins)
 
-Version: 3 - Iceberg Implementation (Partition Evolution and ACID compliance) <--- HIGHLIGHTED
-Version: 2 - Partitioning Fix (cab_type/day removed, now year/month only)
-Version: 1 - Optimization (AQE, Repartition fix, Python refactor)
-Version: 0 baseline
-
 Mirrors the Glue job behavior with 3 cab types (yellow/green/fhv):
 - Reads a single month from S3 raw: {cab_type}_tripdata_{YEAR}-{MM}.parquet
 - Normalizes pickup/dropoff timestamp column names by cab type
@@ -18,9 +13,14 @@ Mirrors the Glue job behavior with 3 cab types (yellow/green/fhv):
 
 Example (EMR step):
   spark-submit --deploy-mode cluster s3://teo-nyc-taxi/scripts/emr-jobs/emr_process_trip_data.py \
-    --cab_type yellow --year 2025 --month 1 \
+    --cab_type yellow --year 2024 --month 1 \
     --raw_prefix s3://teo-nyc-taxi/raw/ \
-    --dest_prefix s3://teo-nyc-taxi/processed/emr/trip_data_iceberg/ <--- HIGHLIGHTED: New Iceberg Destination
+    --dest_prefix s3://teo-nyc-taxi/processed/emr/trip_data/
+Version: 1 -
+    --Add AQE V1 optimizations
+    --Removing df.repartition(...)
+    --Add time for benchmarking
+    --Python Refactor def lower_cols()
 """
 
 import argparse
@@ -34,13 +34,16 @@ def parse_args():
     ap.add_argument("--year", required=True, type=int)
     ap.add_argument("--month", required=True, type=int)
     ap.add_argument("--raw_prefix", default="s3://teo-nyc-taxi/raw/")
-    ap.add_argument("--dest_prefix", default="s3://teo-nyc-taxi/processed/emr/trip_data_iceberg/") # HIGHLIGHTED: Default updated for Iceberg
+    ap.add_argument("--dest_prefix", default="s3://teo-nyc-taxi/processed/emr/trip_data/")
     ap.add_argument("--coalesce", type=int, default=10)
     return ap.parse_args()
 
 def standardize_timestamp_cols(df, cab_type: str):
     """
     Make sure we have 'pickup_datetime' and 'dropoff_datetime' columns.
+    - yellow: tpep_* -> pickup/dropoff
+    - green : lpep_* -> pickup/dropoff
+    - fhv   : usually already has pickup_datetime/dropoff_datetime (if missing we’ll still proceed)
     """
     if cab_type == "yellow":
         if "tpep_pickup_datetime" in df.columns:
@@ -80,21 +83,13 @@ def main():
     start_time = time.time()
     spark = (
         SparkSession.builder
-        .appName(f"emr_process_trip_data_{args.cab_type}_{args.year}_{args.month:02d}_ICEBERG_V3")
-        # REMOVED: .config("spark.jars.packages", "org.apache.iceberg:iceberg-spark-runtime-3.4_2.12:1.4.2")
+        .appName(f"emr_process_trip_data_{args.cab_type}_{args.year}_{args.month:02d}")
         .getOrCreate()
     )
 
-    # --- S-1.2.8.1: ICEBERG/GLUE CATALOG CONFIGURATION (Transferred from JSON) ---
-    # These properties define the Glue Catalog as the Iceberg metastore
-    spark.conf.set("spark.sql.catalog.glue_catalog", "org.apache.iceberg.spark.SparkCatalog")
-    spark.conf.set("spark.sql.catalog.glue_catalog.warehouse", dest_path)
-    spark.conf.set("spark.sql.catalog.glue_catalog.type", "hive")
-    spark.conf.set("spark.sql.catalog.default", "glue_catalog")
-
     # Write behavior to mirror Glue tuning
     spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
-    spark.conf.set("spark.sql.adaptive.enabled", "true") # V1: Enable AQE
+    spark.conf.set("spark.sql.adaptive.enabled", "true") # Enable AQE - V1 enhancements
     spark.conf.set("spark.sql.parquet.compression.codec", "snappy")
     spark.conf.set("parquet.enable.dictionary", "false")
     spark.conf.set("parquet.writer.version", "v1")
@@ -120,13 +115,12 @@ def main():
         (F.month(F.col("pickup_datetime")) == F.lit(int(args.month)))
     )
 
-    # --- ADD PARTITION COLUMNS AND TYPED CONSTANTS ---
+    # Add partition columns and typed constants
     df = (
-        # V2 Partitioning Fix: Restore cab_type as a column for analytical grouping
         df.withColumn("cab_type", F.lit(args.cab_type).cast(T.StringType()))
-        .withColumn("year", F.lit(args.year).cast(T.IntegerType()))
-        .withColumn("month", F.lit(args.month).cast(T.IntegerType()))
-        # V2 Partitioning Fix: Day is omitted to reduce Small Files Problem
+          .withColumn("year", F.lit(args.year).cast(T.IntegerType()))
+          .withColumn("month", F.lit(args.month).cast(T.IntegerType()))
+          .withColumn("day", F.dayofmonth(F.col("pickup_datetime")).cast(T.IntegerType()))
     )
 
 
@@ -143,15 +137,13 @@ def main():
 
 # ... (Continuing inside the main() function) ...
 
-    # --- S-1.2.8.3: ICEBERG WRITER LOGIC ---
-    print(f"[INFO] Writing to Iceberg table: trip_data_iceberg at {dest_path}")
+    # Write partitioned Parquet (append) to the TEST destination
+    print(f"[INFO] Writing to {dest_path}")
     (df
        .write
-       .format("iceberg") # Instructs Spark to use the Iceberg library
-       .mode("overwrite") # Use 'overwrite' for the first run to create the table structure
-       .partitionBy("year", "month") # V2 Partitioning Fix implemented here
-       .saveAsTable("trip_data_iceberg") # Registers the table in the Glue Catalog
-    )
+       .mode("append")
+       .partitionBy("cab_type", "year", "month", "day")
+       .parquet(dest_path))
 
     # --- END TIMING BLOCK (S-1.2.6.8) ---
     end_time = time.time()
@@ -159,7 +151,7 @@ def main():
     # --- END TIMING BLOCK ---
 
     print("[DONE] Write complete.")
-    spark.stop()
+    spark.stop()  # <-- Must be indented inside main()
 
 if __name__ == "__main__":
     main()
