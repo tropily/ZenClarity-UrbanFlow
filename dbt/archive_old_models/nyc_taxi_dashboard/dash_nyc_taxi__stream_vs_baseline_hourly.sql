@@ -1,3 +1,8 @@
+{{ config(
+    enabled = target.name != 'snowflake_iceberg'
+) }}
+
+
 {{ config(materialized='view', tags=['mart','nyc_taxi','compare']) }}
 
 select 'stream' as series, hour, trips, fare_total, avg_passenger_count

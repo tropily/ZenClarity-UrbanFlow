@@ -1,5 +1,6 @@
 {{ config(materialized='view') }}
 
+
 select
   cab_type,
   avg(passenger_count) as avg_passenger_count
