@@ -1,3 +1,8 @@
+{{ config(
+    enabled = target.name != 'snowflake_iceberg'
+) }}
+
+
 with s as (
   select * from {{ ref('stg_nyc_taxi__streaming_trips') }}
 ),

@@ -28,7 +28,6 @@ Example:
       --raw_prefix s3://teo-nyc-taxi/raw/
 """
 
-#!/usr/bin/env python3
 """
 EMR/Glue PySpark job — write NYC Taxi trips to Iceberg (2025+)
 Adds smoke checks and prints the Spark/YARN applicationId for easy `yarn logs`.

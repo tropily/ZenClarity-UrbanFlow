@@ -1,3 +1,7 @@
+{{ config(
+    enabled = target.name != 'snowflake_iceberg'
+) }}
+
 {{ config(materialized='view', tags=['mart','nyc_taxi','baseline']) }}
 
 with chosen_day as (

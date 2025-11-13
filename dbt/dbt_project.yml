@@ -13,9 +13,11 @@ macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
 models:
-  zenclarity_urbanflow:          
+  zenclarity_urbanflow:
     +materialized: view
-    staging:      { +schema: dev_viper_stg,  +tags: ['staging'] }
-    intermediate: { +schema: dev_viper_int,  +tags: ['intermediate'] }
-    marts:        { +schema: dev_viper_mart, +tags: ['marts'] }
+
+    staging:      { +schema: STG_NYC_TAXI,  +tags: ['staging'] }
+    intermediate: { +schema: INT_NYC_TAXI,  +tags: ['intermediate'] }
+    marts:        { +schema: MART_NYC_TAXI, +tags: ['marts'] }
+
 

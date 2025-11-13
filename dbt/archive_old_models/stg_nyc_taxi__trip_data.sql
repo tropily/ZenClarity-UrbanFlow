@@ -1,3 +1,8 @@
+{{ config(
+    enabled = target.name != 'snowflake_iceberg'
+) }}
+
+
 SELECT
   vendorid AS vendor_id,
   pickup_datetime AS pickup_at,

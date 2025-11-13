@@ -3,6 +3,8 @@
 -- switch to 'table' later if needed
 {{ config(materialized='view') }}
 
+
+
 with trips as (
   select
     vendor_id,
