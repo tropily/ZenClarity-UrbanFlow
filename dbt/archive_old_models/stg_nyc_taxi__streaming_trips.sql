@@ -1,3 +1,8 @@
+{{ config(
+    enabled = target.name != 'snowflake_iceberg'
+) }}
+
+
 select
   trip_id,
   pickup_datetime  as pickup_at,
