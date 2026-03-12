@@ -11,7 +11,7 @@ from datetime import timedelta, datetime
 # ----------------------------------------------
 REGION = 'us-east-1'
 SECRET_NAME = 'teo_developer/lambda/redshift'
-REDSHIFT_HOST = 'teo-nyc-workgroup.667137120741.us-east-1.redshift-serverless.amazonaws.com'
+REDSHIFT_HOST = 'teo-nyc-workgroup.*****.us-east-1.redshift-serverless.amazonaws.com'
 REDSHIFT_PORT = 5439
 REDSHIFT_DB = 'nyc_taxi_db'
 REDSHIFT_SCHEMA = 'public'

@@ -8,7 +8,7 @@ import pytz
 # ----------------------------------------------
 REGION = "us-east-1"
 SECRET_NAME = "dev/dbt/redshift" 
-HOST = "teo-nyc-workgroup.667137120741.us-east-1.redshift-serverless.amazonaws.com"
+HOST = "teo-nyc-workgroup.******.us-east-1.redshift-serverless.amazonaws.com"
 PORT = 5439
 DB   = "nyc_taxi_db"
 NYC_TZ = pytz.timezone('America/New_York')

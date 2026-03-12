@@ -3,7 +3,7 @@ import os, json, pandas as pd, psycopg2, streamlit as st, boto3
 # --- Settings (edit if needed) ---
 REGION = "us-east-1"
 SECRET_NAME = "dev/dbt/redshift"  # <- your existing secret
-HOST = "teo-nyc-workgroup.667137120741.us-east-1.redshift-serverless.amazonaws.com"
+HOST = "teo-nyc-workgroup.*******.us-east-1.redshift-serverless.amazonaws.com"
 PORT = 5439
 DB   = "nyc_taxi_db"
 SCHEMA = os.getenv("DBT_MART_SCHEMA", "dev_viper_mart")
