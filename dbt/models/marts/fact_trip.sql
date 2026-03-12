@@ -2,7 +2,7 @@
 
 with src as (
     select *
-    from {{ ref('int_trip_zone_join') }}
+    from {{ ref('int_trip_data_core') }}
 )
 
 select

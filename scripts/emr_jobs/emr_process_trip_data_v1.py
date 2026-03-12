@@ -12,10 +12,10 @@ Mirrors the Glue job behavior with 3 cab types (yellow/green/fhv):
 - Writes partitioned Parquet (append) to a TEST destination on S3
 
 Example (EMR step):
-  spark-submit --deploy-mode cluster s3://teo-nyc-taxi/scripts/emr-jobs/emr_process_trip_data.py \
+  spark-submit --deploy-mode cluster s3://***/scripts/emr-jobs/emr_process_trip_data.py \
     --cab_type yellow --year 2024 --month 1 \
-    --raw_prefix s3://teo-nyc-taxi/raw/ \
-    --dest_prefix s3://teo-nyc-taxi/processed/emr/trip_data/
+    --raw_prefix s3://***/raw/ \
+    --dest_prefix s3://***/processed/emr/trip_data/
 Version: 1 -
     --Add AQE V1 optimizations
     --Removing df.repartition(...)
@@ -33,8 +33,8 @@ def parse_args():
     ap.add_argument("--cab_type", required=True, choices=["yellow", "green", "fhv"])
     ap.add_argument("--year", required=True, type=int)
     ap.add_argument("--month", required=True, type=int)
-    ap.add_argument("--raw_prefix", default="s3://teo-nyc-taxi/raw/")
-    ap.add_argument("--dest_prefix", default="s3://teo-nyc-taxi/processed/emr/trip_data/")
+    ap.add_argument("--raw_prefix", default="s3://***/raw/")
+    ap.add_argument("--dest_prefix", default="s3://***/processed/emr/trip_data/")
     ap.add_argument("--coalesce", type=int, default=10)
     return ap.parse_args()
 

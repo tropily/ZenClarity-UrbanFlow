@@ -22,10 +22,10 @@ Example:
     --conf spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions \
     --conf spark.sql.catalog.glue_catalog=org.apache.iceberg.spark.SparkCatalog \
     --conf spark.sql.catalog.glue_catalog.catalog-impl=org.apache.iceberg.aws.glue.GlueCatalog \
-    --conf spark.sql.catalog.glue_catalog.warehouse=s3://teo-nyc-taxi/warehouse/ \
-    s3://teo-nyc-taxi/scripts/emr-jobs/emr_process_trip_data_iceberg.py \
+    --conf spark.sql.catalog.glue_catalog.warehouse=s3://***/warehouse/ \
+    s3://***/scripts/emr-jobs/emr_process_trip_data_iceberg.py \
       --cab_type yellow --year 2025 --month 1 \
-      --raw_prefix s3://teo-nyc-taxi/raw/
+      --raw_prefix s3://***/raw/
 """
 
 """
@@ -36,7 +36,7 @@ Required Spark confs (pass via --conf):
   spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions
   spark.sql.catalog.glue_catalog=org.apache.iceberg.spark.SparkCatalog
   spark.sql.catalog.glue_catalog.catalog-impl=org.apache.iceberg.aws.glue.GlueCatalog
-  spark.sql.catalog.glue_catalog.warehouse=s3://teo-nyc-taxi/warehouse/
+  spark.sql.catalog.glue_catalog.warehouse=s3://***/warehouse/
 """
 import argparse
 import time
@@ -73,7 +73,7 @@ def parse_args():
     ap.add_argument("--cab_type", required=True, choices=["yellow", "green", "fhv"])
     ap.add_argument("--year", required=True, type=int)
     ap.add_argument("--month", required=True, type=int)
-    ap.add_argument("--raw_prefix", default="s3://teo-nyc-taxi/raw/")
+    ap.add_argument("--raw_prefix", default="s3://***/raw/")
     ap.add_argument("--coalesce", type=int, default=0, help="Optional: coalesce before write (0=skip)")
     ap.add_argument("--smoke", type=int, default=1, help="Run smoke checks before write (1=yes, 0=no)")
     return ap.parse_args()
