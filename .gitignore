@@ -119,3 +119,4 @@ docs/runbooks/*.md
 firehose_config.json
 /sandbox/
 infrastructure/emr/
+infrastructure/emr/
