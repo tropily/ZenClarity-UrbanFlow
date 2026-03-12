@@ -81,7 +81,7 @@ def run_copy_pipeline(cab_type, secret_arn, workgroup, database, s3_path, pipeli
     copy_sql = f"""
         COPY {staging_table}
         FROM '{s3_path}'
-        IAM_ROLE 'arn:aws:iam::667137120741:role/teo_redshift_service_role'
+        IAM_ROLE 'arn:aws:iam::************:role/teo_redshift_service_role'
         FORMAT AS PARQUET;
     """
     print("📄 COPY SQL:\n", copy_sql)

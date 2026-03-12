@@ -10,7 +10,7 @@ def run_redshift_copy(secret_arn, workgroup, database, s3_uri):
     copy_sql = f"""
     COPY {staging_table}
     FROM '{s3_uri}'
-    IAM_ROLE 'arn:aws:iam::667137120741:role/teo_redshift_service_role'
+    IAM_ROLE 'arn:aws:iam::************:role/teo_redshift_service_role'
     FORMAT AS PARQUET;
     """
 

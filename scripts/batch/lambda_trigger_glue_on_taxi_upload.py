@@ -10,7 +10,7 @@ from pipeline_logger import log_pipeline_stage
 sfn = boto3.client("stepfunctions")
 
 # Step Function ARN (replace with your actual one!)
-STATE_MACHINE_ARN = "arn:aws:states:us-east-1:667137120741:stateMachine:step_function_nyc_taxi_monthly_batch"
+STATE_MACHINE_ARN = "arn:aws:states:us-east-1:************:stateMachine:step_function_nyc_taxi_monthly_batch"
 def lambda_handler(event, context):
     print("🚀 Event Received:", json.dumps(event))
 
