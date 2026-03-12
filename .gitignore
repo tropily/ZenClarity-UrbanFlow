@@ -118,3 +118,4 @@ tools/airflow-docker/plugins/
 docs/runbooks/*.md
 firehose_config.json
 /sandbox/
+infrastructure/emr/
