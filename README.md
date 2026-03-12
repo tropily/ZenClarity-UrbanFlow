@@ -1,3 +1,6 @@
+> 🚀 **V2 now live:** [ZenClarity-UrbanFlow-V2](https://github.com/tropily/ZenClarity-UrbanFlow-V2)
+> — Iceberg + Airflow + DynamoDB idempotency framework · both engines confirmed · 42M records
+
 ## 🌆 ZenClarity-UrbanFlow — NYC Taxi Data Engineering Project
 > **A modern data engineering platform** combining streaming + batch pipelines, dbt-powered transformations, and multi-engine analytics across **Redshift Serverless**, **Snowflake**, and **EMR Spark.**
 > Designed for **portability**, **scalability**, **cost-performance benchmarking**, and **real-time insights** delivered via Streamlit.
@@ -106,6 +109,7 @@ ZenClarity-UrbanFlow/
 │     └─ plugins/               # ignored
 └─ README.md
 ```
+
 ---
 
 ### 📈 Data Models & dbt
